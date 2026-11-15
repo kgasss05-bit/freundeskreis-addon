@@ -1,0 +1,349 @@
+{
+  "fkreis": {
+    "settings": {
+      "name": "Freundeskreis",
+      "enabled": {
+        "name": "Enabled",
+        "description": "Turns the whole addon on or off."
+      },
+      "profile": {
+        "name": "Profile",
+        "description": "What others see when they click \"Profile\" in the Freundeskreis wheel. Your birthday lives in \"Calendar\". Command: /steckbrief",
+        "share": {
+          "name": "Share profile",
+          "description": "Other addon users can see your profile."
+        },
+        "inWheel": {
+          "name": "Show in wheel",
+          "description": "Shows \"Profile\" in the Freundeskreis ring."
+        },
+        "nickname": {
+          "name": "Name",
+          "description": "What you want to be called."
+        },
+        "age": {
+          "name": "Age",
+          "description": "Type freely - leave empty if you don't want to show it."
+        },
+        "mobPicker": {
+          "name": "Mob identity",
+          "description": "Which Minecraft mob are you? Type to search."
+        },
+        "country": {
+          "name": "Country",
+          "description": "Type freely, e.g. Germany, USA, China, Japan …"
+        },
+        "openKeys": {
+          "name": "Keys: open your own profile",
+          "description": "Any key combination (one or more keys), only active in-game."
+        },
+        "open": {
+          "name": "View your own profile",
+          "description": "This is how others see your profile.",
+          "text": "Open"
+        },
+        "state": {
+          "name": "State / region",
+          "description": "Type anything, e.g. Bavaria, Texas, Ontario …"
+        },
+        "statePicker": {
+          "name": "Pick German state",
+          "description": "All 16 German states to click. From another country? Just type it in above."
+        },
+        "woodPicker": {
+          "name": "Wood frame",
+          "description": "Wood type for your profile card frame. Click one to select it."
+        }
+      },
+      "stickerBook": {
+        "name": "Sticker book",
+        "description": "Give any player with the Freundeskreis addon your head as a sticker – no friendship needed, you just have to be on the same server. Uses LabyConnect, no chat message. Stickers you receive stay in your book forever. Command: /sammelbuch",
+        "inWheel": {
+          "name": "Show in wheel",
+          "description": "Shows \"Give sticker\" in the Freundeskreis ring."
+        },
+        "accept": {
+          "name": "Accept stickers",
+          "description": "Other addon users can give you stickers."
+        },
+        "open": {
+          "name": "Open sticker book",
+          "description": "Opens your album.",
+          "text": "Open"
+        },
+        "openKeys": {
+          "name": "Keys: open sticker book",
+          "description": "Any key combination (one or more keys), only active in game."
+        }
+      },
+      "notebook": {
+        "name": "Notebook",
+        "description": "Private notes about players – everyone you click or write a note about gets a book on the shelf. Command: /notizbuch",
+        "inWheel": {
+          "name": "Show in wheel",
+          "description": "Shows \"Notebook\" in the Freundeskreis ring."
+        },
+        "open": {
+          "name": "Open notebook",
+          "description": "Opens the bookshelf with all your friends.",
+          "text": "Open"
+        },
+        "woodPicker": {
+          "name": "Wood type",
+          "description": "Preview of all wood types for the shelf. Click one to select it."
+        },
+        "openKeys": {
+          "name": "Keys: open notebook",
+          "description": "Any key combination (one or more keys), only active in game."
+        }
+      },
+      "coins": {
+        "name": "Friendship coins",
+        "description": "Next to your LabyMod friends' names you see a coin showing how long you've been friends. Coin 1 right away, then a new one every 6 months – up to the 20th (Legendary).",
+        "enabled": {
+          "name": "Show coins",
+          "description": "Shows the friendship coin to the right of your friends' names (never on yourself)."
+        },
+        "gallery": {
+          "name": "View coins",
+          "description": "All 20 coins and when you get them."
+        }
+      },
+      "hudWidget": {
+        "name": "Set up HUD widget",
+        "description": "Opens LabyMod's widget editor. Look for \"Next birthday\" and drag it onto your screen.",
+        "text": "Set up"
+      },
+      "calendar": {
+        "name": "Calendar",
+        "description": "Your friends' birthdays: calendar, birthday notifications, a cake next to the name and a HUD widget. Command: /kalender",
+        "birthday": {
+          "name": "Your birthday",
+          "description": "DD.MM. (e.g. 14.03.). After saving you have 10 minutes to fix it, then only every 30 days."
+        },
+        "reminders": {
+          "name": "Birthday notifications",
+          "description": "Get notified when a friend has their birthday – and on your own."
+        },
+        "cake": {
+          "name": "Cake next to the name",
+          "description": "Whoever has their birthday gets a little cake next to their name all day."
+        },
+        "openKeys": {
+          "name": "Keys: open calendar",
+          "description": "Any key combination (one or more keys), only active in-game."
+        },
+        "open": {
+          "name": "Open calendar",
+          "description": "Upcoming birthdays and month view.",
+          "text": "Open"
+        }
+      },
+      "album": {
+        "name": "Photo album",
+        "description": "Glue your best screenshots into an album, with a frame and a short caption. Command: /fotoalbum",
+        "openKeys": {
+          "name": "Keys: open photo album",
+          "description": "Any key combination (one or more keys), only active in-game."
+        },
+        "open": {
+          "name": "Open photo album",
+          "description": "All your glued-in photos.",
+          "text": "Open"
+        },
+        "add": {
+          "name": "Add a photo",
+          "description": "Your screenshots: right-click a picture → \"Save to photo album\".",
+          "text": "Screenshots"
+        },
+        "share": {
+          "name": "Share photo album",
+          "description": "Other addon users on your server can view your album through the wheel (smaller images)."
+        },
+        "inWheel": {
+          "name": "Show in wheel",
+          "description": "Shows \"Photo album\" in the Freundeskreis wheel."
+        }
+      }
+    },
+    "ui": {
+      "wheel": {
+        "profile": "Profile",
+        "sticker": "Give sticker",
+        "notes": "Notebook",
+        "title": "Freundeskreis",
+        "empty": "All entries are turned off in the settings.",
+        "album": "Photo album"
+      },
+      "mob": {
+        "none": "Not specified",
+        "search": "Search:",
+        "scroll": "Mouse wheel to scroll"
+      },
+      "profile": {
+        "title": "Profile",
+        "loading": "Loading profile",
+        "none": "No profile shared.",
+        "notfriend": "This player doesn't have the addon or can't be reached.",
+        "close": "Click or ESC to close",
+        "name": "Name",
+        "age": "Age",
+        "birthday": "Birthday",
+        "mob": "Mob",
+        "bdaytoday": "Has a birthday today!",
+        "cached": "Last saved version",
+        "country": "Country",
+        "state": "State",
+        "chip": {
+          "self": "This is you",
+          "friend": "Friends for %s",
+          "sticker": "Stickers swapped"
+        },
+        "friendship": "Friendship",
+        "since": "for %s",
+        "mobtitle": "Mob identity",
+        "today": "today",
+        "days": "%s days",
+        "month": "1 month",
+        "months": "%s months",
+        "year": "1 year",
+        "years": "%s years"
+      },
+      "sticker": {
+        "title": "Sticker book",
+        "count": "%s stickers collected",
+        "date": "Given on %s",
+        "give": {
+          "title": "Give sticker",
+          "ok": "You gave %s your sticker! It arrives if they have the addon.",
+          "already": "%s already has a sticker from you.",
+          "notfriend": "You have to be LabyMod friends so %s can receive your sticker.",
+          "failed": "The sticker could not be sent."
+        },
+        "got": {
+          "title": "New sticker!",
+          "text": "%s gave you a sticker."
+        }
+      },
+      "notes": {
+        "title": "Notes",
+        "count": "%s",
+        "empty": "No notes yet - press + below",
+        "emptynote": "Empty note",
+        "hint": "Click = edit  ·  hold a note and drag it onto the trash = delete  ·  ESC = back",
+        "one": "note",
+        "many": "notes",
+        "add": "Note",
+        "back": {
+          "shelf": "Shelf",
+          "close": "Close"
+        }
+      },
+      "notebook": {
+        "nofriends": "No LabyMod friends found - are you connected to LabyConnect?",
+        "empty": "Notebook – still empty: open someone's notebook via the Freundeskreis ring"
+      },
+      "bday": {
+        "title": "Birthday!",
+        "text": "It's %s's birthday today - say congrats!",
+        "own": {
+          "title": "Happy birthday!",
+          "text": "Today is your day – your friends see a cake next to your name."
+        },
+        "saved": "%s saved. You can fix it for 10 more minutes, after that only from %s.",
+        "lock": {
+          "title": "Birthday"
+        },
+        "locked": "You can change your birthday again from %s.",
+        "invalid": "Please enter it as DD.MM., e.g. 14.03.",
+        "savedtitle": "Birthday saved"
+      },
+      "msg": {
+        "request": "Profile request",
+        "profile": "Here is my profile.",
+        "noprofile": "I don't share my profile.",
+        "sticker": "I gave you a sticker!",
+        "birthday": "Today is my birthday!"
+      },
+      "coins": {
+        "now": "right away",
+        "months": "after %s months",
+        "year": "after 1 year",
+        "years": "after %s years",
+        "intro": "How long you have to be friends with someone to see the coin:"
+      },
+      "cal": {
+        "title": "Calendar",
+        "next": "Upcoming birthdays",
+        "empty": "No birthdays known yet. Enter your own in the settings and press \"Refresh\" at the bottom right to fetch your friends'.",
+        "today": "today!",
+        "tomorrow": "tomorrow",
+        "indays": "in %s days",
+        "refresh": "Refresh",
+        "refreshing": "Fetching your online friends' profiles …",
+        "wait": "Please wait a minute before refreshing again."
+      },
+      "hud": {
+        "label": "Next birthday",
+        "none": "none known",
+        "title": "HUD widget",
+        "where": "Open Mods → \"Edit HUD Widgets\" at the top and drag \"Next birthday\" onto your screen."
+      },
+      "album": {
+        "title": "Photo album",
+        "add": "Photo",
+        "hint": "Click = view large  ·  hold a photo and drag it onto the trash = delete",
+        "loading": "loading …",
+        "picker": "Screenshots",
+        "noshots": "No screenshots yet – press F2 in-game.",
+        "pickhint": "Right-click a picture → \"Save to photo album\"  ·  mouse wheel = turn pages",
+        "save": "Save to photo album",
+        "insert": "Glue into the album",
+        "frame": "Frame",
+        "caption": "Caption",
+        "captionhint": "e.g. Best evening of my life",
+        "glue": "Glue in",
+        "cancel": "Cancel",
+        "failed": "The photo could not be saved.",
+        "of": "%s's photo album",
+        "noanswer": "No answer – does %s have the addon and is on your server?",
+        "private": "%s does not share their photo album.",
+        "empty": "No photos in the album yet.",
+        "receiving": "Loading photos … %s / %s",
+        "viewhint": "Click = view large  ·  mouse wheel = turn pages",
+        "denied": "%s does not share their photo album.",
+        "hint_view": "Click = view large"
+      },
+      "frame": {
+        "gold": "Gold",
+        "silber": "Silver",
+        "holz": "Wood",
+        "rosa": "Pink",
+        "smaragd": "Emerald",
+        "schwarz": "Black",
+        "weiss": "White",
+        "himmel": "Sky blue"
+      },
+      "state": {
+        "intro": "Click your state:",
+        "custom": "Living elsewhere? Just type your state / region into the \"State / region\" field."
+      },
+      "hub": {
+        "sticker": "Sticker book",
+        "notebook": "Notebook",
+        "calendar": "Calendar",
+        "album": "Photo album",
+        "profile": "My profile",
+        "coins": "Coins"
+      }
+    },
+    "hudWidget": {
+      "fkreis_birthday": {
+        "name": "Next birthday"
+      },
+      "birthday": {
+        "name": "Next birthday"
+      }
+    }
+  }
+}

@@ -1,0 +1,349 @@
+{
+  "fkreis": {
+    "settings": {
+      "name": "Freundeskreis",
+      "enabled": {
+        "name": "Aktiviert",
+        "description": "Schaltet das ganze Addon an oder aus."
+      },
+      "profile": {
+        "name": "Steckbrief",
+        "description": "Was andere über dich sehen, wenn sie im Freundeskreis-Kreis auf „Steckbrief“ klicken. Dein Geburtstag steht im Bereich „Kalender“. Befehl: /steckbrief",
+        "share": {
+          "name": "Steckbrief teilen",
+          "description": "Andere Addon-Nutzer können deinen Steckbrief sehen."
+        },
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt \"Steckbrief\" im Freundeskreis-Kreis."
+        },
+        "nickname": {
+          "name": "Name",
+          "description": "Wie du genannt werden willst."
+        },
+        "age": {
+          "name": "Alter",
+          "description": "Frei eintippen – leer lassen, wenn du es nicht zeigen willst."
+        },
+        "mobPicker": {
+          "name": "Mob-Identifizierung",
+          "description": "Welcher Minecraft-Mob bist du? Tippen zum Suchen."
+        },
+        "country": {
+          "name": "Land",
+          "description": "Frei eintippen, z. B. Deutschland, USA, China, Japan …"
+        },
+        "openKeys": {
+          "name": "Tasten: eigenen Steckbrief öffnen",
+          "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        },
+        "open": {
+          "name": "Eigenen Steckbrief ansehen",
+          "description": "So sehen andere deinen Steckbrief.",
+          "text": "Öffnen"
+        },
+        "state": {
+          "name": "Bundesland / Region",
+          "description": "Frei eintippen, z. B. Hessen, Bayern, Texas …"
+        },
+        "statePicker": {
+          "name": "Bundesland wählen",
+          "description": "Alle 16 deutschen Bundesländer zum Anklicken. Aus einem anderen Land? Einfach oben selbst eintippen."
+        },
+        "woodPicker": {
+          "name": "Holzrahmen",
+          "description": "Holzart für den Rahmen deines Steckbriefs. Klick eine an, um sie zu wählen."
+        }
+      },
+      "stickerBook": {
+        "name": "Sammelbuch",
+        "description": "Schenk jedem Spieler mit dem Freundeskreis-Addon deinen Kopf als Sammelsticker – keine Freundschaft nötig, ihr müsst nur auf demselben Server sein. Läuft über LabyConnect, ohne Chat-Nachricht. Bekommene Sticker bleiben für immer in deinem Sammelbuch. Befehl: /sammelbuch",
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt \"Sticker schenken\" im Freundeskreis-Kreis."
+        },
+        "accept": {
+          "name": "Sticker annehmen",
+          "description": "Andere Addon-Nutzer können dir Sticker schenken."
+        },
+        "open": {
+          "name": "Sammelbuch öffnen",
+          "description": "Öffnet dein Album.",
+          "text": "Öffnen"
+        },
+        "openKeys": {
+          "name": "Tasten: Sammelbuch öffnen",
+          "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        }
+      },
+      "notebook": {
+        "name": "Notizbuch",
+        "description": "Private Notizen zu Spielern – jeder, den du anklickst oder zu dem du etwas notierst, bekommt ein Buch im Regal. Befehl: /notizbuch",
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt \"Notizbuch\" im Freundeskreis-Kreis."
+        },
+        "open": {
+          "name": "Notebook öffnen",
+          "description": "Öffnet das Bücherregal mit allen Freunden.",
+          "text": "Öffnen"
+        },
+        "woodPicker": {
+          "name": "Holzart",
+          "description": "Vorschau aller Holzarten für das Regal. Klick eine an, um sie zu wählen."
+        },
+        "openKeys": {
+          "name": "Tasten: Notizbuch öffnen",
+          "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        }
+      },
+      "coins": {
+        "name": "Freundschafts-Münzen",
+        "description": "Neben dem Namen deiner LabyMod-Freunde siehst du eine Münze, die zeigt, wie lange ihr befreundet seid. Münze 1 sofort, danach alle 6 Monate die nächste – bis zur 20. (Legendär).",
+        "enabled": {
+          "name": "Münzen anzeigen",
+          "description": "Zeigt die Freundschafts-Münze rechts neben dem Namen deiner Freunde (nicht bei dir selbst)."
+        },
+        "gallery": {
+          "name": "Münzen ansehen",
+          "description": "Alle 20 Münzen und ab wann man sie bekommt."
+        }
+      },
+      "hudWidget": {
+        "name": "HUD-Widget einstellen",
+        "description": "Öffnet LabyMods Widget-Editor. Dort findest du „Nächster Geburtstag“ und kannst es auf den Bildschirm ziehen.",
+        "text": "Einstellen"
+      },
+      "calendar": {
+        "name": "Kalender",
+        "description": "Geburtstage deiner Freunde: Kalender, Hinweise am Geburtstag, Kuchen neben dem Namen und HUD-Widget. Befehl: /kalender",
+        "birthday": {
+          "name": "Dein Geburtstag",
+          "description": "TT.MM. (z. B. 14.03.). Nach dem Speichern hast du 10 Minuten zum Korrigieren, danach geht es nur alle 30 Tage."
+        },
+        "reminders": {
+          "name": "Geburtstags-Hinweise",
+          "description": "Hinweis, wenn ein Freund Geburtstag hat – und an deinem eigenen."
+        },
+        "cake": {
+          "name": "Kuchen neben dem Namen",
+          "description": "Wer Geburtstag hat, bekommt den ganzen Tag einen kleinen Kuchen neben seinen Namen."
+        },
+        "openKeys": {
+          "name": "Tasten: Kalender öffnen",
+          "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        },
+        "open": {
+          "name": "Kalender öffnen",
+          "description": "Nächste Geburtstage und Monatsübersicht.",
+          "text": "Öffnen"
+        }
+      },
+      "album": {
+        "name": "Fotoalbum",
+        "description": "Kleb deine schönsten Screenshots mit Rahmen und kleinem Text in ein Album. Befehl: /fotoalbum",
+        "openKeys": {
+          "name": "Tasten: Fotoalbum öffnen",
+          "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        },
+        "open": {
+          "name": "Fotoalbum öffnen",
+          "description": "Alle eingeklebten Fotos.",
+          "text": "Öffnen"
+        },
+        "add": {
+          "name": "Foto einkleben",
+          "description": "Deine Screenshots: Rechtsklick auf ein Bild → „Ins Fotoalbum speichern“.",
+          "text": "Screenshots"
+        },
+        "share": {
+          "name": "Fotoalbum teilen",
+          "description": "Andere Addon-Nutzer auf deinem Server können dein Album über das Mausrad ansehen (verkleinerte Bilder)."
+        },
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt \"Fotoalbum\" im Freundeskreis-Kreis."
+        }
+      }
+    },
+    "ui": {
+      "wheel": {
+        "profile": "Steckbrief",
+        "sticker": "Sticker schenken",
+        "notes": "Notizbuch",
+        "title": "Freundeskreis",
+        "empty": "Alle Einträge sind in den Einstellungen ausgeschaltet.",
+        "album": "Fotoalbum"
+      },
+      "mob": {
+        "none": "Keine Angabe",
+        "search": "Suchen:",
+        "scroll": "Mausrad zum Scrollen"
+      },
+      "profile": {
+        "title": "Steckbrief",
+        "loading": "Steckbrief wird geladen",
+        "none": "Kein Steckbrief geteilt.",
+        "notfriend": "Dieser Spieler hat das Addon nicht oder ist nicht erreichbar.",
+        "close": "Klick oder ESC zum Schließen",
+        "name": "Name",
+        "age": "Alter",
+        "birthday": "Geburtstag",
+        "mob": "Mob",
+        "bdaytoday": "Hat heute Geburtstag!",
+        "cached": "Zuletzt gespeicherter Stand",
+        "country": "Land",
+        "state": "Bundesland",
+        "chip": {
+          "self": "Das bist du",
+          "friend": "Freund seit %s",
+          "sticker": "Sticker getauscht"
+        },
+        "friendship": "Freundschaft",
+        "since": "seit %s",
+        "mobtitle": "Mob-Identität",
+        "today": "heute",
+        "days": "%s Tagen",
+        "month": "1 Monat",
+        "months": "%s Monaten",
+        "year": "1 Jahr",
+        "years": "%s Jahren"
+      },
+      "sticker": {
+        "title": "Sammelbuch",
+        "count": "%s Sticker gesammelt",
+        "date": "Geschenkt am %s",
+        "give": {
+          "title": "Sticker schenken",
+          "ok": "Du hast %s deinen Sticker geschenkt! Er kommt an, wenn die Person das Addon hat.",
+          "already": "%s hat schon einen Sticker von dir.",
+          "notfriend": "Ihr müsst LabyMod-Freunde sein, damit %s deinen Sticker bekommen kann.",
+          "failed": "Der Sticker konnte nicht verschickt werden."
+        },
+        "got": {
+          "title": "Neuer Sticker!",
+          "text": "%s hat dir einen Sticker geschenkt."
+        }
+      },
+      "notes": {
+        "title": "Notizen",
+        "count": "%s",
+        "empty": "Noch keine Notizen - drück unten auf +",
+        "emptynote": "Leere Notiz",
+        "hint": "Klick = bearbeiten  ·  Notiz halten und auf den Papierkorb ziehen = löschen  ·  ESC = zurück",
+        "one": "Notiz",
+        "many": "Notizen",
+        "add": "Notiz",
+        "back": {
+          "shelf": "Regal",
+          "close": "Schließen"
+        }
+      },
+      "notebook": {
+        "nofriends": "Keine LabyMod-Freunde gefunden - bist du mit LabyConnect verbunden?",
+        "empty": "Notebook – noch leer: Öffne über den Freundeskreis-Kreis das Notizbuch einer Person"
+      },
+      "bday": {
+        "title": "Geburtstag!",
+        "text": "%s hat heute Geburtstag - gratulier doch mal!",
+        "own": {
+          "title": "Alles Gute zum Geburtstag!",
+          "text": "Heute ist dein Tag – deine Freunde sehen einen Kuchen neben deinem Namen."
+        },
+        "saved": "%s gespeichert. 10 Minuten kannst du noch korrigieren, danach erst wieder ab %s.",
+        "lock": {
+          "title": "Geburtstag"
+        },
+        "locked": "Du kannst deinen Geburtstag erst wieder ab %s ändern.",
+        "invalid": "Bitte als TT.MM. eintragen, z. B. 14.03.",
+        "savedtitle": "Geburtstag gespeichert"
+      },
+      "msg": {
+        "request": "Steckbrief-Anfrage",
+        "profile": "Hier ist mein Steckbrief.",
+        "noprofile": "Ich teile meinen Steckbrief nicht.",
+        "sticker": "Ich habe dir einen Sticker geschenkt!",
+        "birthday": "Heute ist mein Geburtstag!"
+      },
+      "coins": {
+        "now": "sofort",
+        "months": "nach %s Monaten",
+        "year": "nach 1 Jahr",
+        "years": "nach %s Jahren",
+        "intro": "So lange musst du mit jemandem befreundet sein, um die Münze zu sehen:"
+      },
+      "cal": {
+        "title": "Kalender",
+        "next": "Nächste Geburtstage",
+        "empty": "Noch keine Geburtstage bekannt. Trag deinen eigenen in den Einstellungen ein und drück rechts unten auf „Aktualisieren“, um die deiner Freunde zu holen.",
+        "today": "heute!",
+        "tomorrow": "morgen",
+        "indays": "in %s Tagen",
+        "refresh": "Aktualisieren",
+        "refreshing": "Steckbriefe deiner Online-Freunde werden geholt …",
+        "wait": "Bitte warte eine Minute bis zum nächsten Aktualisieren."
+      },
+      "hud": {
+        "label": "Nächster Geburtstag",
+        "none": "keiner bekannt",
+        "title": "HUD-Widget",
+        "where": "Öffne Mods → oben „Edit HUD Widgets“ und zieh „Nächster Geburtstag“ auf den Bildschirm."
+      },
+      "album": {
+        "title": "Fotoalbum",
+        "add": "Foto",
+        "hint": "Klick = groß ansehen  ·  Foto halten und auf den Papierkorb ziehen = löschen",
+        "loading": "lädt …",
+        "picker": "Screenshots",
+        "noshots": "Noch keine Screenshots – drück im Spiel F2.",
+        "pickhint": "Rechtsklick auf ein Bild → „Ins Fotoalbum speichern“  ·  Mausrad = blättern",
+        "save": "Ins Fotoalbum speichern",
+        "insert": "Ins Album einkleben",
+        "frame": "Rahmen",
+        "caption": "Text unter dem Bild",
+        "captionhint": "z. B. Schönster Abend meines Lebens",
+        "glue": "Einkleben",
+        "cancel": "Abbrechen",
+        "failed": "Das Foto konnte nicht gespeichert werden.",
+        "of": "Fotoalbum von %s",
+        "noanswer": "Keine Antwort – hat %s das Addon und ist auf deinem Server?",
+        "private": "%s teilt das Fotoalbum nicht.",
+        "empty": "Noch keine Fotos im Album.",
+        "receiving": "Fotos werden geladen … %s / %s",
+        "viewhint": "Klick = groß ansehen  ·  Mausrad = blättern",
+        "denied": "%s teilt das Fotoalbum nicht.",
+        "hint_view": "Klick = groß ansehen"
+      },
+      "frame": {
+        "gold": "Gold",
+        "silber": "Silber",
+        "holz": "Holz",
+        "rosa": "Rosa",
+        "smaragd": "Smaragd",
+        "schwarz": "Schwarz",
+        "weiss": "Weiß",
+        "himmel": "Himmelblau"
+      },
+      "state": {
+        "intro": "Klick auf dein Bundesland:",
+        "custom": "Woanders zuhause? Tipp dein Bundesland / deinen Staat einfach ins Feld „Bundesland / Region“."
+      },
+      "hub": {
+        "sticker": "Sammelbuch",
+        "notebook": "Notizbuch",
+        "calendar": "Kalender",
+        "album": "Fotoalbum",
+        "profile": "Mein Steckbrief",
+        "coins": "Münzen"
+      }
+    },
+    "hudWidget": {
+      "fkreis_birthday": {
+        "name": "Nächster Geburtstag"
+      },
+      "birthday": {
+        "name": "Nächster Geburtstag"
+      }
+    }
+  }
+}
