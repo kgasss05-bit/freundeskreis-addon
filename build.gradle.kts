@@ -5,29 +5,30 @@ plugins {
 
 val versions = providers.gradleProperty("net.labymod.minecraft-versions").get().split(";")
 
-group = "org.example"
-version = providers.environmentVariable("VERSION").getOrElse("1.0.0")
+group = "de.ulgu.fkreis"
+version = providers.environmentVariable("VERSION").getOrElse("2.0.0")
 
 labyMod {
-    defaultPackageName = "org.example" //change this to your main package name (used by all modules)
+    defaultPackageName = "de.ulgu.fkreis"
 
     minecraft {
         registerVersion(versions.toTypedArray()) {
             runs {
                 getByName("client") {
-                    // When the property is set to true, you can log in with a Minecraft account
-                    // devLogin = true
+                    devLogin = true
                 }
             }
         }
     }
 
     addonInfo {
-        namespace = "example"
-        displayName = "ExampleAddon"
-        author = "Example Author"
-        description = "Example Description"
-        minecraftVersion = "*"
+        namespace = "fkreis"
+        displayName = "Freundeskreis"
+        author = "Priester_Horst"
+        description = "ULGU Software: profile cards, a sticker book, a notebook shelf with notes for every friend, friendship coins, a birthday calendar with HUD widget and a shareable photo album."
+        // Das Addon nutzt nur die LabyMod-API (kein versionsspezifischer Code),
+        // deshalb laeuft es auf allen LabyMod-Versionen von 1.21 bis 26.3.
+        minecraftVersion = "1.21<*"
         version = rootProject.version.toString()
     }
 }

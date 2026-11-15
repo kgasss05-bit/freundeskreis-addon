@@ -1,4 +1,5 @@
-rootProject.name = "labymod4-addon-template"
+// rootProject.name muss exakt dem Addon-Namespace entsprechen.
+rootProject.name = "fkreis"
 
 pluginManagement {
     repositories {
@@ -8,9 +9,8 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-
     plugins {
-        id("net.labymod.labygradle.settings") version "0.11.0"
+        id("net.labymod.labygradle.settings") version "0.9.0"
     }
 }
 
