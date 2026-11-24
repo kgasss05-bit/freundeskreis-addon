@@ -164,6 +164,62 @@
           "name": "Show in wheel",
           "description": "Shows \"Photo album\" in the Freundeskreis wheel."
         }
+      },
+      "vanish": {
+        "name": "Vanish",
+        "description": "Hide any player just for yourself – invisible, even when all players are shown. Works on every Minecraft version. Bring them back from the Scroll of the Banished (/fk).",
+        "enabled": {
+          "name": "Vanish enabled",
+          "description": "Off = everyone you hid is visible again."
+        },
+        "inWheel": {
+          "name": "Show in wheel",
+          "description": "Shows \"Hide\" in the Freundeskreis wheel."
+        },
+        "openKeys": {
+          "name": "Hotkey: scroll",
+          "description": "Opens the Scroll of the Banished."
+        },
+        "open": {
+          "name": "Scroll of the Banished",
+          "description": "All hidden players – click a name to bring them back.",
+          "text": "Open"
+        }
+      },
+      "diary": {
+        "name": "Diary",
+        "description": "Your private diary with a leather cover. Only you can read it – unless you give someone your share code. Open it via /fk.",
+        "remind": {
+          "name": "Reminder on server join",
+          "description": "Shows \"You have not written in your diary today\" when you join a server and have not written yet."
+        },
+        "askOnQuit": {
+          "name": "Ask when quitting",
+          "description": "Asks once whether you want to write an entry: on 1.21.11 right when the game closes, on other versions after you leave the server."
+        },
+        "openKeys": {
+          "name": "Hotkey: diary",
+          "description": "Opens your diary."
+        },
+        "open": {
+          "name": "Open diary",
+          "description": "Opens your diary on today's page.",
+          "text": "Open"
+        },
+        "cover": {
+          "name": "Design cover",
+          "description": "Choose the leather, a seam of gold or silver thread, or dye a white book yourself.",
+          "text": "Design"
+        },
+        "friendCode": {
+          "name": "Code of a shared diary",
+          "description": "Did someone give you their diary code? Enter it here."
+        },
+        "openShared": {
+          "name": "Open shared diary",
+          "description": "Opens the diary of the person whose code is entered above. They must be online on the same server.",
+          "text": "Open"
+        }
       }
     },
     "ui": {
@@ -173,7 +229,9 @@
         "notes": "Notebook",
         "title": "Freundeskreis",
         "empty": "All entries are turned off in the settings.",
-        "album": "Photo album"
+        "album": "Photo album",
+        "vanishHide": "Hide",
+        "vanishShow": "Show again"
       },
       "mob": {
         "none": "Not specified",
@@ -334,7 +392,103 @@
         "calendar": "Calendar",
         "album": "Photo album",
         "profile": "My profile",
-        "coins": "Coins"
+        "coins": "Coins",
+        "vanish": "Banished",
+        "diary": "Diary",
+        "diaryCover": "Diary cover"
+      },
+      "vanish": {
+        "wheel": {
+          "title": "Hide / Show"
+        },
+        "scroll": {
+          "title": "The Banished",
+          "hint": "Click a name to bring them back",
+          "empty": "Nobody is banished.",
+          "seal": "Click the seal",
+          "restore": "restore"
+        }
+      },
+      "diary": {
+        "locale": "en",
+        "title": "Diary",
+        "time": "%s",
+        "placeholder": "Dear diary …",
+        "owner": "This diary belongs to",
+        "since": "started on %s",
+        "remind": "You have not written in your diary today. Open it with /fk.",
+        "quit": {
+          "title": "One moment",
+          "text": "Would you like to write a diary entry first?",
+          "yes": "Yes, write",
+          "no": "No, quit",
+          "never": "Do not ask again when quitting",
+          "later": "No, later"
+        },
+        "cover": {
+          "title": "Design cover",
+          "leather": "Leather",
+          "hell": "Light leather",
+          "mittel": "Medium leather",
+          "dunkel": "Dark leather",
+          "eigen": "Dye a white book yourself",
+          "trim": "Metal thread seam",
+          "white": "White, not dyed yet",
+          "unsaved": "not saved yet",
+          "hint": "Take a dye and drag it onto the book. Colours mix.",
+          "water": "Water bucket – makes the book white again",
+          "save": "Save",
+          "trimNone": "None",
+          "trimGold": "Gold",
+          "trimSilver": "Silver"
+        },
+        "dye": {
+          "white": "White Dye",
+          "light_gray": "Light Gray Dye",
+          "gray": "Gray Dye",
+          "black": "Black Dye",
+          "brown": "Brown Dye",
+          "red": "Red Dye",
+          "orange": "Orange Dye",
+          "yellow": "Yellow Dye",
+          "lime": "Lime Dye",
+          "green": "Green Dye",
+          "cyan": "Cyan Dye",
+          "light_blue": "Light Blue Dye",
+          "blue": "Blue Dye",
+          "purple": "Purple Dye",
+          "magenta": "Magenta Dye",
+          "pink": "Pink Dye"
+        },
+        "openHint": "Click to open",
+        "todayDone": "Already written today",
+        "todayOpen": "No entry yet today",
+        "copied": "Entry copied",
+        "copyEmpty": "Nothing written on this page yet",
+        "pasted": "Pasted",
+        "pastedPart": "Pasted – the rest went over the daily limit",
+        "pasteEmpty": "The clipboard is empty",
+        "pasteFull": "The daily limit is reached",
+        "pasteToday": "You can only paste on today's page",
+        "part": "page %s of %s",
+        "share": "Share diary",
+        "shareOffText": "Your diary is private. If you create a code, anyone you give it to can read your diary – but not change it.",
+        "shareOnText": "Anyone who enters this code in the addon settings can read your diary while you are both online on the same server.",
+        "shareCreate": "Create code",
+        "shareCopy": "Copy code",
+        "shareNew": "New code",
+        "shareStop": "Stop sharing",
+        "shareClose": "Close",
+        "shareCopied": "Code copied",
+        "shareCopyFail": "Copying failed",
+        "shared": {
+          "title": "Diary of %s",
+          "readOnly": "Shared diary – read only",
+          "loading": "Loading diary …",
+          "failed": "The code does not match, or the data arrived damaged.",
+          "nobody": "No answer. The person with this code must be online on the same server with the addon – and the code must be right.",
+          "noCode": "Enter the code you were given first (12 characters)."
+        }
       }
     },
     "hudWidget": {

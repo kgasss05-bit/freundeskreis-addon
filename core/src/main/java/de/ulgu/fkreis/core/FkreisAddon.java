@@ -68,6 +68,14 @@ public class FkreisAddon extends LabyAddon<FkreisConfig> {
     this.registerCommand(new FkCommands.Kalender());
     this.registerCommand(new FkCommands.Fotoalbum());
 
+    // Tagebuch: privat, nur ueber /fk oder die Taste – bewusst NICHT im Freundeskreis-Rad
+    this.registerListener(new de.ulgu.fkreis.core.diary.DiaryTicker(this));
+
+    // Vanish: Spieler nur fuer dich ausblenden (Freundeskreis-Rad, /fk, Schriftrolle der Verbannten)
+    de.ulgu.fkreis.core.vanish.Vanish vanish = de.ulgu.fkreis.core.vanish.Vanish.init(this);
+    this.registerListener(new de.ulgu.fkreis.core.vanish.listener.TickListener(vanish));
+    this.registerListener(new de.ulgu.fkreis.core.vanish.listener.RenderListener(vanish));
+
     this.logger().info("Freundeskreis (ULGU Software) geladen.");
   }
 

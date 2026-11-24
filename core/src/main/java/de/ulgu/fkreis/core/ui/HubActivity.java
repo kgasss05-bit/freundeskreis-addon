@@ -37,6 +37,11 @@ public class HubActivity extends FkActivity {
     this.items.add(new Item(L.t("hub.profile"), 0xFF4A8A3A,
         () -> Screens.now(new ProfileScrollActivity(Net.self(), Laby.labyAPI().getName()))));
     this.items.add(new Item(L.t("hub.coins"), 0xFF8A5AB8, () -> Screens.now(new CoinGalleryActivity())));
+    this.items.add(new Item(L.t("hub.diary"), 0xFF8A5630, () -> Screens.now(new de.ulgu.fkreis.core.diary.DiaryActivity(false))));
+    this.items.add(new Item(L.t("hub.vanish"), 0xFF7A1F1F, () -> {
+      Screens.close();
+      de.ulgu.fkreis.core.vanish.ui.Screens.openList();
+    }));
     G.click();
   }
 
@@ -44,7 +49,8 @@ public class HubActivity extends FkActivity {
     float bw = 150, bh = 26, gap = 8;
     float total = 2 * bw + gap;
     float x0 = this.x + (this.w - total) / 2F;
-    float y0 = this.y + this.h / 2F - (3 * bh + 2 * gap) / 2F + 8;
+    int rows = (this.items.size() + 1) / 2;
+    float y0 = this.y + this.h / 2F - (rows * bh + (rows - 1) * gap) / 2F + 8;
     return new float[] {x0 + (i % 2) * (bw + gap), y0 + (i / 2) * (bh + gap), bw, bh};
   }
 
@@ -53,7 +59,7 @@ public class HubActivity extends FkActivity {
     float open = G.easeOut(this.age() / 0.25F);
     G.rect(s, this.x, this.y, this.w, this.h, G.alpha(0xB0000000, open));
     float[] first = this.rect(0), last = this.rect(this.items.size() - 1);
-    float px = first[0] - 14, py = first[1] - 40, pw = last[0] + last[2] - first[0] + 28, ph = last[1] + last[3] - first[1] + 62;
+    float px = first[0] - 14, py = first[1] - 40, pw = 2 * first[2] + 8 + 28, ph = last[1] + last[3] - first[1] + 62;
     G.rect(s, px + 3, py + 4, pw, ph, 0x60000000);
     G.rect(s, px, py, pw, ph, 0xF01C1F28);
     G.outline(s, px, py, pw, ph, 1, 0xFF3A4152);

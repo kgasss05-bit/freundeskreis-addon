@@ -43,6 +43,11 @@ public class HotkeyListener {
       Screens.openCalendar();
     } else if (combo(this.addon.configuration().album().openKeys().get(), key)) {
       Screens.openAlbum();
+    } else if (combo(this.addon.configuration().diary().openKeys().get(), key)) {
+      Screens.openDiary();
+    } else if (this.addon.configuration().vanish().enabled().get()
+        && combo(this.addon.configuration().vanish().openKeys().get(), key)) {
+      de.ulgu.fkreis.core.vanish.ui.Screens.openList();
     }
   }
 

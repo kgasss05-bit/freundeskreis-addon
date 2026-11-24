@@ -226,6 +226,12 @@ public class Net {
     return this.album;
   }
 
+  private final DiaryShare diaryShare = new DiaryShare();
+
+  public DiaryShare diaryShare() {
+    return this.diaryShare;
+  }
+
   void sendBroadcast(UUID to, String type, String payload) {
     this.broadcast(to, type, payload);
   }
@@ -341,6 +347,14 @@ public class Net {
         G.sound("entity.player.levelup", 1.6F);
         break;
       }
+      case "DRQ": {
+        this.diaryShare.onRequest(from, payload);
+        break;
+      }
+      case "DRC": {
+        this.diaryShare.onChunk(from, payload);
+        break;
+      }
       case "ALQ": {
         this.album.onRequest(from);
         break;
@@ -406,6 +420,7 @@ public class Net {
 
     ++this.ticks;
     this.album.tick(this);
+    this.diaryShare.tick(this);
     if (this.ticks % 40 == 1) {
       this.refreshFriendSince();
     }

@@ -6,7 +6,7 @@ plugins {
 val versions = providers.gradleProperty("net.labymod.minecraft-versions").get().split(";")
 
 group = "de.ulgu.fkreis"
-version = providers.environmentVariable("VERSION").getOrElse("2.0.0")
+version = providers.environmentVariable("VERSION").getOrElse("2.2.0")
 
 labyMod {
     defaultPackageName = "de.ulgu.fkreis"
@@ -25,7 +25,7 @@ labyMod {
         namespace = "fkreis"
         displayName = "Freundeskreis"
         author = "Priester_Horst"
-        description = "ULGU Software: profile cards, a sticker book, a notebook shelf with notes for every friend, friendship coins, a birthday calendar with HUD widget and a shareable photo album."
+        description = "ULGU Software: profile cards, a sticker book, a notebook shelf with notes for every friend, friendship coins, a birthday calendar with HUD widget, a shareable photo album, Vanish (hide any player just for yourself) and a private diary with a leather cover you can dye."
         // Das Addon nutzt nur die LabyMod-API (kein versionsspezifischer Code),
         // deshalb laeuft es auf allen LabyMod-Versionen von 1.21 bis 26.3.
         minecraftVersion = "1.21<*"

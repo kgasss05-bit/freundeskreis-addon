@@ -74,6 +74,26 @@ public final class Screens {
     }
   }
 
+  public static void openDiary() {
+    if (FkreisAddon.get().on()) {
+      show(new de.ulgu.fkreis.core.diary.DiaryActivity(false));
+    }
+  }
+
+  /** Tagebuch einer anderen Person oeffnen – mit dem Code aus den Einstellungen. */
+  public static void openSharedDiary() {
+    FkreisAddon addon = FkreisAddon.get();
+    if (!addon.on()) {
+      return;
+    }
+    String code = addon.configuration().diary().friendCode().get();
+    if (de.ulgu.fkreis.core.net.DiaryShare.norm(code).length() < 12) {
+      de.ulgu.fkreis.core.net.Net.notify(de.ulgu.fkreis.core.L.t("diary.title"), de.ulgu.fkreis.core.L.t("diary.shared.noCode"), null);
+      return;
+    }
+    show(new de.ulgu.fkreis.core.diary.DiaryActivity(addon.net().diaryShare().request(addon.net(), code)));
+  }
+
   /** Beliebigen Bildschirm (verzoegert) oeffnen. */
   public static void open(Activity activity) {
     if (FkreisAddon.get().on()) {

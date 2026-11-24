@@ -57,6 +57,14 @@ public class RingActivity extends FkActivity {
     if (addon.configuration().album().inWheel().get()) {
       this.entries.add(new Entry(L.t("wheel.album"), () -> Screens.now(new AlbumActivity(uuid, name))));
     }
+    de.ulgu.fkreis.core.vanish.Vanish vanish = de.ulgu.fkreis.core.vanish.Vanish.get();
+    if (vanish != null && vanish.on() && addon.configuration().vanish().inWheel().get() && !uuid.equals(Net.self())) {
+      boolean hidden = vanish.isHidden(uuid);
+      this.entries.add(new Entry(L.t(hidden ? "wheel.vanishShow" : "wheel.vanishHide"), () -> {
+        this.displayPreviousScreen();
+        vanish.toggle(uuid, name);
+      }));
+    }
     G.click();
   }
 

@@ -116,6 +116,11 @@ public final class PhotoTex {
 
   private static final ResourceLocation PLACEHOLDER = ResourceLocation.create("fkreis", "textures/ui/paper.png");
 
+  /** Fertiges Bild direkt als Textur hochladen (z. B. der Tagebuch-Einband). Im Render-Thread aufrufen. */
+  public static Icon uploadImage(java.awt.image.BufferedImage img) {
+    return upload(img);
+  }
+
   /** Offizieller Weg (wie im Spotify-Addon): GameImage -> SimpleTexture -> registrieren. */
   private static Icon upload(java.awt.image.BufferedImage img) {
     ResourceLocation loc = ResourceLocation.create("fkreis", "album/photo_" + (counter++));

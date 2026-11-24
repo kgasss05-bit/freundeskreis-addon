@@ -9,6 +9,8 @@ LabyMod 4 addon by **Priester_Horst** (ULGU Software) for Minecraft 1.21 and new
 - **Friendship coins** – a coin next to a friend's name that changes with the length of the friendship
 - **Birthday calendar** – birthday reminders, a cake next to the name on the birthday and a HUD widget "Next birthday"
 - **Photo album** – save screenshots with frames and captions, optionally let others view your album
+- **Vanish** – hide any player just for yourself (mouse-wheel entry or `/fk`), bring them back from the "Scroll of the Banished"; done purely through LabyMod render events
+- **Diary** – a private leather-bound diary with one entry per day (several pages), optional reminder on server join, selectable cover (three leathers or a white book you dye yourself); can be shared read-only with a code
 - `/fk` quick menu, keybinds and mouse-wheel entries for everything
 
 ## How data is exchanged

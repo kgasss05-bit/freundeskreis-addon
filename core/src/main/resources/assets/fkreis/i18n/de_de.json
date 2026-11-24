@@ -164,6 +164,62 @@
           "name": "Im Kreis anzeigen",
           "description": "Zeigt \"Fotoalbum\" im Freundeskreis-Kreis."
         }
+      },
+      "vanish": {
+        "name": "Vanish",
+        "description": "Spieler nur für dich ausblenden – unsichtbar, auch wenn alle Spieler angezeigt werden. Läuft auf allen Minecraft-Versionen. Zurückholen über die Schriftrolle der Verbannten (/fk).",
+        "enabled": {
+          "name": "Vanish aktiviert",
+          "description": "Aus = alle Ausgeblendeten sind wieder sichtbar."
+        },
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt \"Ausblenden\" im Freundeskreis-Kreis."
+        },
+        "openKeys": {
+          "name": "Tastenkombination: Schriftrolle",
+          "description": "Öffnet die Schriftrolle der Verbannten."
+        },
+        "open": {
+          "name": "Schriftrolle der Verbannten",
+          "description": "Alle ausgeblendeten Spieler – klick einen Namen an, um ihn zurückzuholen.",
+          "text": "Öffnen"
+        }
+      },
+      "diary": {
+        "name": "Tagebuch",
+        "description": "Dein privates Tagebuch mit Ledereinband. Nur du kannst es lesen – außer du gibst jemandem deinen Teilen-Code. Öffnen über /fk.",
+        "remind": {
+          "name": "Erinnerung beim Server-Join",
+          "description": "Zeigt „Du hast heute noch kein Tagebuch geschrieben“, wenn du einen Server betrittst und heute noch nichts geschrieben hast."
+        },
+        "askOnQuit": {
+          "name": "Beim Beenden nachfragen",
+          "description": "Fragt einmal, ob du noch einen Eintrag schreiben möchtest: auf 1.21.11 direkt beim Schließen des Spiels, auf anderen Versionen nach dem Verlassen des Servers."
+        },
+        "openKeys": {
+          "name": "Tastenkombination: Tagebuch",
+          "description": "Öffnet dein Tagebuch."
+        },
+        "open": {
+          "name": "Tagebuch öffnen",
+          "description": "Schlägt dein Tagebuch auf der heutigen Seite auf.",
+          "text": "Öffnen"
+        },
+        "cover": {
+          "name": "Einband gestalten",
+          "description": "Leder wählen, Naht aus Gold- oder Silberfaden, oder ein weißes Buch selbst färben.",
+          "text": "Gestalten"
+        },
+        "friendCode": {
+          "name": "Code eines geteilten Tagebuchs",
+          "description": "Hat dir jemand seinen Tagebuch-Code gegeben? Trag ihn hier ein."
+        },
+        "openShared": {
+          "name": "Geteiltes Tagebuch öffnen",
+          "description": "Öffnet das Tagebuch der Person, deren Code oben steht. Sie muss gerade auf demselben Server online sein.",
+          "text": "Öffnen"
+        }
       }
     },
     "ui": {
@@ -173,7 +229,9 @@
         "notes": "Notizbuch",
         "title": "Freundeskreis",
         "empty": "Alle Einträge sind in den Einstellungen ausgeschaltet.",
-        "album": "Fotoalbum"
+        "album": "Fotoalbum",
+        "vanishHide": "Ausblenden",
+        "vanishShow": "Einblenden"
       },
       "mob": {
         "none": "Keine Angabe",
@@ -334,7 +392,103 @@
         "calendar": "Kalender",
         "album": "Fotoalbum",
         "profile": "Mein Steckbrief",
-        "coins": "Münzen"
+        "coins": "Münzen",
+        "vanish": "Verbannte",
+        "diary": "Tagebuch",
+        "diaryCover": "Tagebuch-Einband"
+      },
+      "vanish": {
+        "wheel": {
+          "title": "Ausblenden / Einblenden"
+        },
+        "scroll": {
+          "title": "Die Verbannten",
+          "hint": "Klick auf einen Namen, um ihn zurückzuholen",
+          "empty": "Niemand ist verbannt.",
+          "seal": "Siegel anklicken",
+          "restore": "zurückholen"
+        }
+      },
+      "diary": {
+        "locale": "de",
+        "title": "Tagebuch",
+        "time": "%s Uhr",
+        "placeholder": "Liebes Tagebuch …",
+        "owner": "Dieses Tagebuch gehört",
+        "since": "begonnen am %s",
+        "remind": "Du hast heute noch kein Tagebuch geschrieben. Öffne es mit /fk.",
+        "quit": {
+          "title": "Moment noch",
+          "text": "Möchtest du vorher noch einen Tagebucheintrag machen?",
+          "yes": "Ja, schreiben",
+          "no": "Nein, verlassen",
+          "never": "Beim Beenden nicht mehr fragen",
+          "later": "Nein, später"
+        },
+        "cover": {
+          "title": "Einband gestalten",
+          "leather": "Leder",
+          "hell": "Helles Leder",
+          "mittel": "Mittleres Leder",
+          "dunkel": "Dunkles Leder",
+          "eigen": "Weißes Buch selbst färben",
+          "trim": "Naht aus Metallfaden",
+          "white": "Weiß, noch ungefärbt",
+          "unsaved": "noch nicht gespeichert",
+          "hint": "Farbstoff nehmen und aufs Buch ziehen. Farben mischen sich.",
+          "water": "Wassereimer – macht das Buch wieder weiß",
+          "save": "Speichern",
+          "trimNone": "Ohne",
+          "trimGold": "Gold",
+          "trimSilver": "Silber"
+        },
+        "dye": {
+          "white": "Weißer Farbstoff",
+          "light_gray": "Hellgrauer Farbstoff",
+          "gray": "Grauer Farbstoff",
+          "black": "Schwarzer Farbstoff",
+          "brown": "Brauner Farbstoff",
+          "red": "Roter Farbstoff",
+          "orange": "Oranger Farbstoff",
+          "yellow": "Gelber Farbstoff",
+          "lime": "Hellgrüner Farbstoff",
+          "green": "Grüner Farbstoff",
+          "cyan": "Türkiser Farbstoff",
+          "light_blue": "Hellblauer Farbstoff",
+          "blue": "Blauer Farbstoff",
+          "purple": "Violetter Farbstoff",
+          "magenta": "Magenta Farbstoff",
+          "pink": "Rosa Farbstoff"
+        },
+        "openHint": "Anklicken zum Aufschlagen",
+        "todayDone": "Heute schon geschrieben",
+        "todayOpen": "Heute noch kein Eintrag",
+        "copied": "Eintrag kopiert",
+        "copyEmpty": "Auf dieser Seite steht noch nichts",
+        "pasted": "Eingefügt",
+        "pastedPart": "Eingefügt – der Rest ging über das Tageslimit",
+        "pasteEmpty": "Die Zwischenablage ist leer",
+        "pasteFull": "Das Tageslimit ist erreicht",
+        "pasteToday": "Einfügen geht nur auf der heutigen Seite",
+        "part": "Seite %s von %s",
+        "share": "Tagebuch teilen",
+        "shareOffText": "Dein Tagebuch ist privat. Wenn du einen Code erzeugst, kann jeder, dem du ihn gibst, dein Tagebuch lesen – aber nicht ändern.",
+        "shareOnText": "Wer diesen Code in den Addon-Einstellungen einträgt, kann dein Tagebuch lesen, solange ihr beide auf demselben Server online seid.",
+        "shareCreate": "Code erzeugen",
+        "shareCopy": "Code kopieren",
+        "shareNew": "Neuer Code",
+        "shareStop": "Teilen beenden",
+        "shareClose": "Schließen",
+        "shareCopied": "Code kopiert",
+        "shareCopyFail": "Kopieren hat nicht geklappt",
+        "shared": {
+          "title": "Tagebuch von %s",
+          "readOnly": "Geteiltes Tagebuch – nur lesen",
+          "loading": "Tagebuch wird geladen …",
+          "failed": "Der Code passt nicht, oder die Daten kamen beschädigt an.",
+          "nobody": "Keine Antwort. Die Person mit diesem Code muss mit dem Addon auf demselben Server online sein – und der Code muss stimmen.",
+          "noCode": "Trag zuerst den Code ein, den du bekommen hast (12 Zeichen)."
+        }
       }
     },
     "hudWidget": {

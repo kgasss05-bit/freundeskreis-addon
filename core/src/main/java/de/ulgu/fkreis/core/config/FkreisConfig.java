@@ -32,6 +32,12 @@ public class FkreisConfig extends AddonConfig {
   @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final AlbumSettings album = new AlbumSettings();
 
+  @IntroducedIn(namespace = "fkreis", value = "2.1.0")
+  private final VanishSettings vanish = new VanishSettings();
+
+  @IntroducedIn(namespace = "fkreis", value = "2.2.0")
+  private final DiarySettings diary = new DiarySettings();
+
   /** Ganz oben: Knopf "HUD-Widget einstellen". */
   @MethodOrder(after = "enabled")
   @IntroducedIn(namespace = "fkreis", value = "2.0.0")
@@ -63,6 +69,14 @@ public class FkreisConfig extends AddonConfig {
 
   public CalendarSettings calendar() {
     return this.calendar;
+  }
+
+  public DiarySettings diary() {
+    return this.diary;
+  }
+
+  public VanishSettings vanish() {
+    return this.vanish;
   }
 
   public AlbumSettings album() {

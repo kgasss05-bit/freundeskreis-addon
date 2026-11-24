@@ -27,6 +27,7 @@ public class AlbumSettings extends Config {
   /** Zuletzt gewaehlter Rahmen (wird beim naechsten Foto vorausgewaehlt). */
   private final ConfigProperty<String> lastFrame = new ConfigProperty<>("GOLD");
 
+  @MethodOrder(after = "openKeys")
   @ButtonSetting
   public void open(Setting setting) {
     Screens.openAlbum();

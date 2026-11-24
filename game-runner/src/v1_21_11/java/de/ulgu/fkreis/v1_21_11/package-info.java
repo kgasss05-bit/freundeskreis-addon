@@ -1,2 +1,2 @@
-/** Versionsordner (leer): das Addon braucht keinen versionsspezifischen Code. */
+/** Versionsordner: Eingriff fuer die Tagebuch-Nachfrage beim Beenden des Spiels. */
 package de.ulgu.fkreis.v1_21_11;
