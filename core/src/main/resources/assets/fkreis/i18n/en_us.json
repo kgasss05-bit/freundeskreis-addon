@@ -231,7 +231,8 @@
         "empty": "All entries are turned off in the settings.",
         "album": "Photo album",
         "vanishHide": "Hide",
-        "vanishShow": "Show again"
+        "vanishShow": "Show again",
+        "stickerBook": "Open sticker book"
       },
       "mob": {
         "none": "Not specified",

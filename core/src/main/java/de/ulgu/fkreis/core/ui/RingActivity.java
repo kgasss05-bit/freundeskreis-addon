@@ -42,10 +42,15 @@ public class RingActivity extends FkActivity {
       this.entries.add(new Entry(L.t("wheel.profile"), () -> Screens.now(new ProfileScrollActivity(uuid, name))));
     }
     if (addon.configuration().stickerBook().inWheel().get()) {
-      this.entries.add(new Entry(L.t("wheel.sticker"), () -> {
-        this.displayPreviousScreen();
-        Ui.giveSticker(uuid, name);
-      }));
+      if (addon.store().given.contains(uuid.toString())) {
+        // Sticker ist schon verschenkt: stattdessen das eigene Stickerbuch anbieten
+        this.entries.add(new Entry(L.t("wheel.stickerBook"), () -> Screens.now(new StickerBookActivity())));
+      } else {
+        this.entries.add(new Entry(L.t("wheel.sticker"), () -> {
+          this.displayPreviousScreen();
+          Ui.giveSticker(uuid, name);
+        }));
+      }
     }
     if (addon.configuration().notebook().inWheel().get()) {
       // Erst das Regal (die Person steht dann schon drin), von dort ins Notizbuch
