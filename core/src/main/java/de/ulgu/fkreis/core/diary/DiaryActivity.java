@@ -46,6 +46,10 @@ public class DiaryActivity extends FkActivity {
 
   /** Eine Buchseite: Tag (oder Namensblatt), der wievielte Teil des Tages und die Zeilen darauf. */
   /** Eine umbrochene Zeile mit ihrer Position im Text (start bis end), damit man in den Text klicken kann. */
+  /** Unsichtbares Zeichen im Text: "hier beginnt eine neue Seite". */
+  private static final char BREAK = '\f';
+  private static final String BREAK_S = "\f";
+
   private static final class Ln {
     final int start, end;
     final String text;
@@ -54,7 +58,7 @@ public class DiaryActivity extends FkActivity {
       this.start = start;
       this.end = end;
       String t = all.substring(start, end);
-      this.text = t.endsWith("\n") ? t.substring(0, t.length() - 1) : t;
+      this.text = t.endsWith("\n") || t.endsWith(BREAK_S) ? t.substring(0, t.length() - 1) : t;
     }
   }
 
@@ -78,12 +82,23 @@ public class DiaryActivity extends FkActivity {
   }
 
   /** Zeilenumbruch, bei dem jedes Zeichen genau zu einer Zeile gehoert (wichtig fuer den Cursor). */
-  private static List<Ln> wrap(String t, float maxW) {
+  private static List<Ln> wrap(String t, float maxW, int perPage) {
     List<Ln> out = new java.util.ArrayList<>();
     int n = t.length(), ls = 0, i = 0, lastSpace = -1;
     float w = 0;
     while (i < n) {
       char c = t.charAt(i);
+      if (c == BREAK) { // Seitenwechsel: Rest der Seite bleibt leer
+        out.add(new Ln(t, ls, i + 1));
+        while (out.size() % perPage != 0) {
+          out.add(new Ln(t, i + 1, i + 1));
+        }
+        ls = i + 1;
+        lastSpace = -1;
+        w = 0;
+        i++;
+        continue;
+      }
       if (c == '\n') {
         out.add(new Ln(t, ls, i + 1));
         ls = i + 1;
@@ -342,7 +357,7 @@ public class DiaryActivity extends FkActivity {
         if (this.readOnly && this.diary.text(id).trim().isEmpty()) {
           continue; // leere Seite "heute" gibt es im fremden Buch nicht
         }
-        List<Ln> wrapped = wrap(this.diary.text(id), this.bodyW);
+        List<Ln> wrapped = wrap(this.diary.text(id), this.bodyW, this.maxLines);
         if (this.today.equals(id)) {
           this.todayLines = wrapped;
         }
@@ -460,7 +475,7 @@ public class DiaryActivity extends FkActivity {
     if (this.view > 0) {
       this.arrow(s, px + 12, py + ph - 15, true, G.in(mx, my, px + 8, py + ph - 19, 28, 16));
     }
-    if (this.view + 2 < this.pages.size()) {
+    if (this.view + 2 < this.pages.size() || this.canAddPage()) {
       this.arrow(s, px + pw - 30, py + ph - 15, false, G.in(mx, my, px + pw - 36, py + ph - 19, 28, 16));
     }
 
@@ -604,8 +619,31 @@ public class DiaryActivity extends FkActivity {
     }
   }
 
+  /** Eine neue leere Seite fuer heute gibt es, wenn man auf der letzten Seite steht und dort schon etwas steht. */
+  private boolean canAddPage() {
+    if (this.readOnly || this.pages.isEmpty() || this.view + 2 < this.pages.size()) {
+      return false;
+    }
+    Pg last = this.pages.get(this.pages.size() - 1);
+    if (!this.isToday(last) || this.diary.text(this.today).length() >= Diary.MAX_CHARS) {
+      return false;
+    }
+    for (Ln l : last.lines) {
+      if (!l.text.trim().isEmpty()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private void flip(int dir) {
     int nv = this.view + dir * 2;
+    if (dir > 0 && nv >= this.pages.size() && this.canAddPage()) {
+      String t = this.diary.text(this.today);
+      this.edit(t + BREAK_S, t.length() + 1); // neue Seite aufschlagen, Schreibmarke dorthin
+      G.sound("item.book.page_turn", 1F);
+      return;
+    }
     if (nv < 0 || nv >= this.pages.size()) {
       return;
     }
@@ -629,6 +667,10 @@ public class DiaryActivity extends FkActivity {
   /** Schreibmarke eine Zeile hoch (-1) oder runter (+1), moeglichst an derselben Stelle. */
   private void moveLine(int dir) {
     int cl = this.caretLine(), nl = cl + dir;
+    // leere Fuellzeilen am Ende einer vorzeitig beendeten Seite ueberspringen
+    while (nl > 0 && nl < this.todayLines.size() - 1 && this.todayLines.get(nl).start == this.todayLines.get(nl).end) {
+      nl += dir;
+    }
     if (nl < 0 || nl >= this.todayLines.size()) {
       return;
     }
@@ -648,7 +690,7 @@ public class DiaryActivity extends FkActivity {
     String text = day == null || Diary.PLATE.equals(day) ? "" : this.diary.text(day);
     if (text.isEmpty()) {
       this.say("diary.copyEmpty");
-    } else if (Clip.set(text)) {
+    } else if (Clip.set(text.replace(BREAK_S, "\n\n"))) {
       this.say("diary.copied");
       G.click();
     }
@@ -691,6 +733,14 @@ public class DiaryActivity extends FkActivity {
     this.done = true;
     if (this.readOnly) {
       return; // fremdes Tagebuch wird nie gespeichert
+    }
+    String t = this.diary.text(this.today);
+    int end = t.length();
+    while (end > 0 && t.charAt(end - 1) == BREAK) {
+      end--; // angefangene, aber leer gebliebene Seiten nicht mitspeichern
+    }
+    if (end < t.length()) {
+      this.diary.write(t.substring(0, end));
     }
     this.diary.save();
     if (this.quitAfter) {
@@ -740,6 +790,10 @@ public class DiaryActivity extends FkActivity {
       float X = px + side * half;
       if (this.isToday(pg) && G.in(mx, my, X + 12, top - 2, half - 20, this.maxLines * LH + 4)) {
         int row = Math.max(0, Math.min(pg.lines.size() - 1, (int) ((my - top) / LH)));
+        Ln lastLine = this.todayLines.isEmpty() ? null : this.todayLines.get(this.todayLines.size() - 1);
+        while (row > 0 && pg.lines.get(row) != lastLine && pg.lines.get(row).start == pg.lines.get(row).end) {
+          row--; // Klick in den leeren Rest der Seite: ans Ende des Geschriebenen
+        }
         if (pg.lines.isEmpty()) {
           this.moveCaret(0);
         } else {
