@@ -4,6 +4,7 @@ import de.ulgu.fkreis.core.FkreisAddon;
 import de.ulgu.fkreis.core.L;
 import de.ulgu.fkreis.core.data.Sticker;
 import de.ulgu.fkreis.core.gfx.G;
+import de.ulgu.fkreis.core.net.StickerShare;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +29,25 @@ public class StickerBookActivity extends FkActivity {
   private final float[] hover = new float[PER_SPREAD];
   private int spread;
 
+  /** Bei einem fremden Sammelbuch: wem es gehoert und was die Person geschickt hat. Sonst null. */
+  private final String ownerName;
+  private final StickerShare.Remote remote;
+
   public StickerBookActivity() {
+    this.ownerName = null;
+    this.remote = null;
+    G.sound("item.book.page_turn", 0.9F);
+  }
+
+  /** Sammelbuch einer anderen Person ansehen (nur lesen). */
+  public StickerBookActivity(UUID owner, String ownerName) {
+    this.ownerName = ownerName;
+    this.remote = FkreisAddon.get().net().stickerShare().request(FkreisAddon.get().net(), owner);
     G.sound("item.book.page_turn", 0.9F);
   }
 
   private List<Sticker> stickers() {
-    return FkreisAddon.get().store().stickers;
+    return this.remote != null ? this.remote.stickers : FkreisAddon.get().store().stickers;
   }
 
   private int spreads() {
@@ -70,7 +84,18 @@ public class StickerBookActivity extends FkActivity {
 
     this.book.drawBase(s, COVER);
     G.centered(s, L.t("sticker.title"), this.book.leftX + this.book.pageW / 2F, this.book.pageY + 10, 0xFF3A2A1A, 1.55F, false);
-    G.centered(s, L.t("sticker.count", this.stickers().size()), this.book.rightX + this.book.pageW / 2F, this.book.pageY + 12, 0xFF7A5A3A, 1.1F, false);
+    String sub = L.t("sticker.count", this.stickers().size());
+    if (this.remote != null) {
+      G.centered(s, G.fit(L.t("sticker.of", this.ownerName), this.book.pageW - 10, 0.85F), this.book.leftX + this.book.pageW / 2F, this.book.pageY + 24, 0xFF7A5A3A, 0.85F, false);
+      if (this.remote.state == StickerShare.State.LOADING) {
+        sub = L.t("sticker.loading");
+      } else if (this.remote.state == StickerShare.State.PRIVATE) {
+        sub = L.t("sticker.private");
+      } else if (this.remote.state == StickerShare.State.NO_REPLY) {
+        sub = L.t("sticker.noReply");
+      }
+    }
+    G.centered(s, G.fit(sub, this.book.pageW - 10, 1.1F), this.book.rightX + this.book.pageW / 2F, this.book.pageY + 12, 0xFF7A5A3A, 1.1F, false);
 
     List<Sticker> list = this.stickers();
     int from = this.spread * PER_SPREAD;
@@ -95,6 +120,14 @@ public class StickerBookActivity extends FkActivity {
       this.sticker(s, st, r, this.hover[local], local);
     }
     this.book.drawFlip(s);
+
+    if (this.remote != null && this.remote.state == StickerShare.State.NO_REPLY) {
+      float hy = this.book.y + this.book.h + 18;
+      for (String line : G.wrap(L.t("sticker.noReplyHint", this.ownerName), Math.min(this.w - 30, 380), 0.9F)) {
+        G.centered(s, line, cx, hy, 0xFFE8DCC0, 0.9F, true);
+        hy += 10;
+      }
+    }
 
     // Seitenzahl unter dem Buch + Pfeile
     int sp = this.spreads();

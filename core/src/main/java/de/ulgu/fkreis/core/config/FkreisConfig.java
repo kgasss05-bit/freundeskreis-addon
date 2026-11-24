@@ -38,6 +38,12 @@ public class FkreisConfig extends AddonConfig {
   @IntroducedIn(namespace = "fkreis", value = "2.2.0")
   private final DiarySettings diary = new DiarySettings();
 
+  @IntroducedIn(namespace = "fkreis", value = "2.3.0")
+  private final MixtapeSettings mixtape = new MixtapeSettings();
+
+  @IntroducedIn(namespace = "fkreis", value = "2.3.0")
+  private final TimeLetterSettings timeLetter = new TimeLetterSettings();
+
   /** Ganz oben: Knopf "HUD-Widget einstellen". */
   @MethodOrder(after = "enabled")
   @IntroducedIn(namespace = "fkreis", value = "2.0.0")
@@ -69,6 +75,14 @@ public class FkreisConfig extends AddonConfig {
 
   public CalendarSettings calendar() {
     return this.calendar;
+  }
+
+  public MixtapeSettings mixtape() {
+    return this.mixtape;
+  }
+
+  public TimeLetterSettings timeLetter() {
+    return this.timeLetter;
   }
 
   public DiarySettings diary() {

@@ -226,6 +226,12 @@ public class Net {
     return this.album;
   }
 
+  private final StickerShare stickerShare = new StickerShare();
+
+  public StickerShare stickerShare() {
+    return this.stickerShare;
+  }
+
   private final DiaryShare diaryShare = new DiaryShare();
 
   public DiaryShare diaryShare() {
@@ -259,6 +265,11 @@ public class Net {
       de.ulgu.fkreis.core.FkreisAddon.log().warn("Freundeskreis: " + t);
       return false;
     }
+  }
+
+  /** Bietet einem Spieler eine Kassette an (er muss sie erst annehmen). */
+  public boolean offerTape(UUID to, String payload) {
+    return this.broadcast(to, "MTO", payload);
   }
 
   private void reply(UUID to, String type, String payload) {
@@ -347,6 +358,22 @@ public class Net {
         G.sound("entity.player.levelup", 1.6F);
         break;
       }
+      case "MTO": {
+        de.ulgu.fkreis.core.mixtape.Gifts.onOffer(from, fromName, payload);
+        break;
+      }
+      case "SBQ": {
+        this.stickerShare.onRequest(this, from);
+        break;
+      }
+      case "SBL": {
+        this.stickerShare.onList(from, payload);
+        break;
+      }
+      case "SBN": {
+        this.stickerShare.onDenied(from);
+        break;
+      }
       case "DRQ": {
         this.diaryShare.onRequest(from, payload);
         break;
@@ -421,6 +448,7 @@ public class Net {
     ++this.ticks;
     this.album.tick(this);
     this.diaryShare.tick(this);
+    this.stickerShare.tick();
     if (this.ticks % 40 == 1) {
       this.refreshFriendSince();
     }

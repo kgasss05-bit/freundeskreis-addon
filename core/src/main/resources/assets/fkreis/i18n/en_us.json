@@ -60,7 +60,7 @@
         "description": "Give any player with the Freundeskreis addon your head as a sticker – no friendship needed, you just have to be on the same server. Uses LabyConnect, no chat message. Stickers you receive stay in your book forever. Command: /sammelbuch",
         "inWheel": {
           "name": "Show in wheel",
-          "description": "Shows \"Give sticker\" in the Freundeskreis ring."
+          "description": "Shows \"Give sticker\" in the Freundeskreis ring – and afterwards \"View sticker book\"."
         },
         "accept": {
           "name": "Accept stickers",
@@ -74,6 +74,10 @@
         "openKeys": {
           "name": "Keys: open sticker book",
           "description": "Any key combination (one or more keys), only active in game."
+        },
+        "share": {
+          "name": "Others may view my sticker book",
+          "description": "Anyone who gave you a sticker can open your sticker book and see which stickers you have. Only head, name and date are transferred."
         }
       },
       "notebook": {
@@ -220,6 +224,55 @@
           "description": "Opens the diary of the person whose code is entered above. They must be online on the same server.",
           "text": "Open"
         }
+      },
+      "mixtape": {
+        "name": "Mixtapes",
+        "description": "Your box of tapes: collect songs with your own label and a YouTube or Spotify link, put them into the recorder and give them to friends. The song is started through the link in your browser.",
+        "inWheel": {
+          "name": "Show in the ring",
+          "description": "Shows \"Give mixtape\" in the Freundeskreis ring."
+        },
+        "acceptGifts": {
+          "name": "Accept tapes",
+          "description": "Other addon users may offer you tapes. You decide each time whether to accept."
+        },
+        "open": {
+          "name": "Open mixtapes",
+          "description": "Opens your box of tapes.",
+          "text": "Open"
+        },
+        "background": {
+          "name": "Background",
+          "description": "Pick the wood shown behind this menu.",
+          "text": "Pick"
+        },
+        "hud": {
+          "name": "Show recorder at the top",
+          "description": "While a tape is playing, the small recorder floats at the top right. Off: only a short line in chat."
+        },
+        "hudSize": {
+          "name": "Recorder size",
+          "description": "Switches between small, medium and large.",
+          "text": "Switch"
+        }
+      },
+      "timeLetter": {
+        "name": "Time letter",
+        "description": "Write a letter to yourself and pick a day (up to 10 years ahead). Until then the addon shows nothing about it.",
+        "notifyArrival": {
+          "name": "Announce arrival",
+          "description": "Tells you when joining a server that a letter has arrived."
+        },
+        "open": {
+          "name": "Open time letter",
+          "description": "Opens the desk with the envelope.",
+          "text": "Open"
+        },
+        "background": {
+          "name": "Background",
+          "description": "Pick the wood shown behind this menu.",
+          "text": "Pick"
+        }
       }
     },
     "ui": {
@@ -232,7 +285,8 @@
         "album": "Photo album",
         "vanishHide": "Hide",
         "vanishShow": "Show again",
-        "stickerBook": "Open sticker book"
+        "stickerBook": "View sticker book",
+        "mixtape": "Give mixtape"
       },
       "mob": {
         "none": "Not specified",
@@ -282,7 +336,12 @@
         "got": {
           "title": "New sticker!",
           "text": "%s gave you a sticker."
-        }
+        },
+        "of": "of %s",
+        "loading": "Loading …",
+        "private": "Not shared",
+        "noReply": "No answer",
+        "noReplyHint": "%s has to be online on the same server and use the latest Freundeskreis version."
       },
       "notes": {
         "title": "Notes",
@@ -396,7 +455,9 @@
         "coins": "Coins",
         "vanish": "Banished",
         "diary": "Diary",
-        "diaryCover": "Diary cover"
+        "diaryCover": "Diary cover",
+        "mixtape": "Mixtapes",
+        "letter": "Time letter"
       },
       "vanish": {
         "wheel": {
@@ -490,6 +551,79 @@
           "nobody": "No answer. The person with this code must be online on the same server with the addon – and the code must be right.",
           "noCode": "Enter the code you were given first (12 characters)."
         }
+      },
+      "mixtape": {
+        "title": "Mixtapes",
+        "search": "Search a song: just type",
+        "tabOwn": "Mine %s/%s",
+        "tabGifts": "Friends %s/%s",
+        "new": "+ New",
+        "edit": "Edit",
+        "hudSize0": "Size: small",
+        "hudSize1": "Size: medium",
+        "hudSize2": "Size: large",
+        "nowPlaying": "Now playing: %s",
+        "ownFull": "The box holds no more than %s songs of your own.",
+        "giftsFull": "All %s slots for songs from friends are taken.",
+        "offerNote": "%s wants to give you a tape. Open /fk → Mixtapes.",
+        "offerTitle": "%s gives you a tape",
+        "offerText": "Do you want to accept the tape?",
+        "accept": "Accept",
+        "decline": "Decline",
+        "editNew": "New tape",
+        "editOld": "Edit tape",
+        "label": "Label",
+        "fieldTitle": "Label (song name, type it yourself)",
+        "fieldLink": "Link (YouTube or Spotify)",
+        "fieldColor": "Tape colour",
+        "pasteHint": "Paste the link with Ctrl+V",
+        "errTitle": "Please enter a song name.",
+        "errLink": "That is not a YouTube or Spotify link (https://…).",
+        "save": "Save",
+        "cancel": "Cancel",
+        "giveTitle": "Mixtape for %s",
+        "giveHint": "Which tape do you want to give?",
+        "giveEmpty": "You have no tape of your own yet.",
+        "giveSent": "Request sent to %s. The tape arrives once it is accepted.",
+        "giveFailed": "The request to %s could not be sent.",
+        "give": "Give away",
+        "pickTitle": "Give a tape",
+        "pickHint": "Who should be offered the tape? You have to be on the same server.",
+        "pickEmpty": "You have no LabyMod friends yet.",
+        "pickOnline": "online",
+        "pickOffline": "offline"
+      },
+      "letter": {
+        "title": "Time letter",
+        "placeholder": "Dear future me …",
+        "hintPull": "Grab the note, hold and pull it up out of the envelope.",
+        "hintWrite": "Write your letter. Then grab the note at its top edge and pull it back into the envelope – that closes the letter.",
+        "hintClose": "Pull the note all the way into the envelope and the letter closes by itself.",
+        "hintDate": "The letter is closed. Pick the day it should arrive: %s",
+        "in1m": "In 1 month",
+        "in1y": "In 1 year",
+        "in10y": "In 10 years",
+        "send": "Send",
+        "hintSent": "The letter is gone. It will reach you in the future – until then you will not hear from it.",
+        "another": "Write another letter",
+        "hintArrived": "A letter from the past, written on %s.",
+        "hintRead": "Written on %s.",
+        "done": "Close",
+        "tooMany": "There are already a lot of letters on their way.",
+        "arrivedNote": "A letter from the past has arrived. Open /fk → Time letter.",
+        "openMail": "Open the letter"
+      },
+      "backdrop": {
+        "oak": "Oak",
+        "spruce": "Spruce",
+        "birch": "Birch",
+        "dark_oak": "Dark oak",
+        "jungle": "Jungle",
+        "acacia": "Acacia",
+        "mangrove": "Mangrove",
+        "cherry": "Cherry",
+        "titleMixtape": "Mixtapes background",
+        "titleLetter": "Time letter background"
       }
     },
     "hudWidget": {

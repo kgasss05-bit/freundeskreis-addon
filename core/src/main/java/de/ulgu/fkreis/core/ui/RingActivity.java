@@ -43,8 +43,8 @@ public class RingActivity extends FkActivity {
     }
     if (addon.configuration().stickerBook().inWheel().get()) {
       if (addon.store().given.contains(uuid.toString())) {
-        // Sticker ist schon verschenkt: stattdessen das eigene Stickerbuch anbieten
-        this.entries.add(new Entry(L.t("wheel.stickerBook"), () -> Screens.now(new StickerBookActivity())));
+        // Sticker ist schon verschenkt: stattdessen das Sammelbuch dieser Person ansehen
+        this.entries.add(new Entry(L.t("wheel.stickerBook"), () -> Screens.now(new StickerBookActivity(uuid, name))));
       } else {
         this.entries.add(new Entry(L.t("wheel.sticker"), () -> {
           this.displayPreviousScreen();
@@ -61,6 +61,9 @@ public class RingActivity extends FkActivity {
     }
     if (addon.configuration().album().inWheel().get()) {
       this.entries.add(new Entry(L.t("wheel.album"), () -> Screens.now(new AlbumActivity(uuid, name))));
+    }
+    if (addon.configuration().mixtape().inWheel().get() && !uuid.equals(Net.self())) {
+      this.entries.add(new Entry(L.t("wheel.mixtape"), () -> Screens.now(new de.ulgu.fkreis.core.mixtape.TapeGiveActivity(uuid, name))));
     }
     de.ulgu.fkreis.core.vanish.Vanish vanish = de.ulgu.fkreis.core.vanish.Vanish.get();
     if (vanish != null && vanish.on() && addon.configuration().vanish().inWheel().get() && !uuid.equals(Net.self())) {

@@ -19,6 +19,9 @@ public class StickerSettings extends Config {
   @SwitchSetting
   private final ConfigProperty<Boolean> accept = new ConfigProperty<>(true);
 
+  @SwitchSetting
+  private final ConfigProperty<Boolean> share = new ConfigProperty<>(true);
+
   @MultiKeyBindSetting
   private final ConfigProperty<Key[]> openKeys = new ConfigProperty<>(new Key[0]);
 
@@ -34,6 +37,10 @@ public class StickerSettings extends Config {
 
   public ConfigProperty<Boolean> accept() {
     return this.accept;
+  }
+
+  public ConfigProperty<Boolean> share() {
+    return this.share;
   }
 
   public ConfigProperty<Key[]> openKeys() {

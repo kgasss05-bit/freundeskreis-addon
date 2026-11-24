@@ -60,7 +60,7 @@
         "description": "Schenk jedem Spieler mit dem Freundeskreis-Addon deinen Kopf als Sammelsticker – keine Freundschaft nötig, ihr müsst nur auf demselben Server sein. Läuft über LabyConnect, ohne Chat-Nachricht. Bekommene Sticker bleiben für immer in deinem Sammelbuch. Befehl: /sammelbuch",
         "inWheel": {
           "name": "Im Kreis anzeigen",
-          "description": "Zeigt \"Sticker schenken\" im Freundeskreis-Kreis."
+          "description": "Zeigt \"Sticker schenken\" im Freundeskreis-Kreis – und danach \"Sammelbuch ansehen\"."
         },
         "accept": {
           "name": "Sticker annehmen",
@@ -74,6 +74,10 @@
         "openKeys": {
           "name": "Tasten: Sammelbuch öffnen",
           "description": "Frei wählbare Tastenkombination (eine oder mehrere Tasten), nur im Spiel aktiv."
+        },
+        "share": {
+          "name": "Andere dürfen mein Sammelbuch ansehen",
+          "description": "Wer dir einen Sticker geschenkt hat, kann dein Sammelbuch öffnen und sehen, welche Sticker du hast. Übertragen werden nur Kopf, Name und Datum."
         }
       },
       "notebook": {
@@ -220,6 +224,55 @@
           "description": "Öffnet das Tagebuch der Person, deren Code oben steht. Sie muss gerade auf demselben Server online sein.",
           "text": "Öffnen"
         }
+      },
+      "mixtape": {
+        "name": "Mixtapes",
+        "description": "Deine Kassettenkiste: Songs mit eigenem Aufdruck und Link zu YouTube oder Spotify sammeln, in den Rekorder legen und an Freunde verschenken. Der Song wird über den Link im Browser gestartet.",
+        "inWheel": {
+          "name": "Im Kreis anzeigen",
+          "description": "Zeigt „Mixtape schenken“ im Freundeskreis-Kreis."
+        },
+        "acceptGifts": {
+          "name": "Kassetten annehmen",
+          "description": "Andere Addon-Nutzer dürfen dir Kassetten anbieten. Du entscheidest jedes Mal selbst, ob du sie annimmst."
+        },
+        "open": {
+          "name": "Mixtapes öffnen",
+          "description": "Öffnet deine Kassettenkiste.",
+          "text": "Öffnen"
+        },
+        "background": {
+          "name": "Hintergrund",
+          "description": "Such das Holz aus, das hinter diesem Menü zu sehen ist.",
+          "text": "Aussuchen"
+        },
+        "hud": {
+          "name": "Rekorder oben anzeigen",
+          "description": "Solange eine Kassette läuft, schwebt oben rechts der kleine Rekorder. Aus: Es kommt nur kurz eine Zeile im Chat."
+        },
+        "hudSize": {
+          "name": "Größe des Rekorders",
+          "description": "Schaltet weiter: klein, mittel, groß.",
+          "text": "Wechseln"
+        }
+      },
+      "timeLetter": {
+        "name": "Zeitbrief",
+        "description": "Schreib dir selbst einen Brief und such einen Tag aus (bis zu 10 Jahre voraus). Bis dahin zeigt das Addon nichts mehr davon an.",
+        "notifyArrival": {
+          "name": "Ankunft melden",
+          "description": "Meldet beim Betreten eines Servers, wenn ein Brief angekommen ist."
+        },
+        "open": {
+          "name": "Zeitbrief öffnen",
+          "description": "Öffnet den Schreibtisch mit dem Umschlag.",
+          "text": "Öffnen"
+        },
+        "background": {
+          "name": "Hintergrund",
+          "description": "Such das Holz aus, das hinter diesem Menü zu sehen ist.",
+          "text": "Aussuchen"
+        }
       }
     },
     "ui": {
@@ -232,7 +285,8 @@
         "album": "Fotoalbum",
         "vanishHide": "Ausblenden",
         "vanishShow": "Einblenden",
-        "stickerBook": "Stickerbuch öffnen"
+        "stickerBook": "Sammelbuch ansehen",
+        "mixtape": "Mixtape schenken"
       },
       "mob": {
         "none": "Keine Angabe",
@@ -282,7 +336,12 @@
         "got": {
           "title": "Neuer Sticker!",
           "text": "%s hat dir einen Sticker geschenkt."
-        }
+        },
+        "of": "von %s",
+        "loading": "Wird geholt …",
+        "private": "Nicht freigegeben",
+        "noReply": "Keine Antwort",
+        "noReplyHint": "%s muss gerade auf demselben Server online sein und die neueste Freundeskreis-Version haben."
       },
       "notes": {
         "title": "Notizen",
@@ -396,7 +455,9 @@
         "coins": "Münzen",
         "vanish": "Verbannte",
         "diary": "Tagebuch",
-        "diaryCover": "Tagebuch-Einband"
+        "diaryCover": "Tagebuch-Einband",
+        "mixtape": "Mixtapes",
+        "letter": "Zeitbrief"
       },
       "vanish": {
         "wheel": {
@@ -490,6 +551,79 @@
           "nobody": "Keine Antwort. Die Person mit diesem Code muss mit dem Addon auf demselben Server online sein – und der Code muss stimmen.",
           "noCode": "Trag zuerst den Code ein, den du bekommen hast (12 Zeichen)."
         }
+      },
+      "mixtape": {
+        "title": "Mixtapes",
+        "search": "Song suchen: einfach tippen",
+        "tabOwn": "Meine %s/%s",
+        "tabGifts": "Freunde %s/%s",
+        "new": "+ Neu",
+        "edit": "Bearbeiten",
+        "hudSize0": "Größe: klein",
+        "hudSize1": "Größe: mittel",
+        "hudSize2": "Größe: groß",
+        "nowPlaying": "Jetzt spielt: %s",
+        "ownFull": "Mehr als %s eigene Songs passen nicht in die Kiste.",
+        "giftsFull": "Die %s Plätze für Songs von Freunden sind voll.",
+        "offerNote": "%s möchte dir eine Kassette schenken. Öffne /fk → Mixtapes.",
+        "offerTitle": "%s schenkt dir ein Tape",
+        "offerText": "Möchtest du die Kassette annehmen?",
+        "accept": "Annehmen",
+        "decline": "Ablehnen",
+        "editNew": "Neue Kassette",
+        "editOld": "Kassette bearbeiten",
+        "label": "Aufdruck",
+        "fieldTitle": "Aufdruck (Songname, selbst eingeben)",
+        "fieldLink": "Link (YouTube oder Spotify)",
+        "fieldColor": "Farbe der Kassette",
+        "pasteHint": "Link einfügen mit Strg+V",
+        "errTitle": "Bitte einen Songnamen eingeben.",
+        "errLink": "Das ist kein Link zu YouTube oder Spotify (https://…).",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "giveTitle": "Mixtape für %s",
+        "giveHint": "Welche Kassette möchtest du schenken?",
+        "giveEmpty": "Du hast noch keine eigene Kassette.",
+        "giveSent": "Anfrage an %s gesendet. Die Kassette kommt an, wenn sie angenommen wird.",
+        "giveFailed": "Die Anfrage an %s konnte nicht gesendet werden.",
+        "give": "Verschenken",
+        "pickTitle": "Kassette verschenken",
+        "pickHint": "Wem möchtest du die Kassette anbieten? Ihr müsst auf demselben Server sein.",
+        "pickEmpty": "Du hast noch keine LabyMod-Freunde.",
+        "pickOnline": "online",
+        "pickOffline": "offline"
+      },
+      "letter": {
+        "title": "Zeitbrief",
+        "placeholder": "Liebes Zukunfts-Ich …",
+        "hintPull": "Pack den Zettel, halte gedrückt und zieh ihn nach oben aus dem Umschlag.",
+        "hintWrite": "Schreib deinen Brief. Danach den Zettel am oberen Rand packen und wieder in den Umschlag ziehen – dann ist der Brief zu.",
+        "hintClose": "Zieh den Zettel ganz in den Umschlag, dann geht der Brief von selbst zu.",
+        "hintDate": "Der Brief ist zu. Such den Tag aus, an dem er ankommen soll: %s",
+        "in1m": "In 1 Monat",
+        "in1y": "In 1 Jahr",
+        "in10y": "In 10 Jahren",
+        "send": "Verschicken",
+        "hintSent": "Der Brief ist weg. Er kommt in der Zukunft bei dir an – bis dahin hörst du nichts mehr von ihm.",
+        "another": "Noch einen Brief schreiben",
+        "hintArrived": "Ein Brief aus der Vergangenheit, geschrieben am %s.",
+        "hintRead": "Geschrieben am %s.",
+        "done": "Schließen",
+        "tooMany": "Es sind schon sehr viele Briefe unterwegs.",
+        "arrivedNote": "Ein Brief aus der Vergangenheit ist angekommen. Öffne /fk → Zeitbrief.",
+        "openMail": "Brief öffnen"
+      },
+      "backdrop": {
+        "oak": "Eiche",
+        "spruce": "Fichte",
+        "birch": "Birke",
+        "dark_oak": "Schwarzeiche",
+        "jungle": "Tropenholz",
+        "acacia": "Akazie",
+        "mangrove": "Mangrove",
+        "cherry": "Kirsche",
+        "titleMixtape": "Hintergrund der Mixtapes",
+        "titleLetter": "Hintergrund des Zeitbriefs"
       }
     },
     "hudWidget": {
