@@ -619,21 +619,16 @@ public class DiaryActivity extends FkActivity {
     }
   }
 
-  /** Eine neue leere Seite fuer heute gibt es, wenn man auf der letzten Seite steht und dort schon etwas steht. */
+  /** Hoechstens so viele Seiten pro Tag. */
+  private static final int MAX_DAY_PAGES = 30;
+
+  /** Auf der letzten Seite von heute kann man immer eine weitere Seite aufschlagen, auch wenn noch nichts dasteht. */
   private boolean canAddPage() {
     if (this.readOnly || this.pages.isEmpty() || this.view + 2 < this.pages.size()) {
       return false;
     }
     Pg last = this.pages.get(this.pages.size() - 1);
-    if (!this.isToday(last) || this.diary.text(this.today).length() >= Diary.MAX_CHARS) {
-      return false;
-    }
-    for (Ln l : last.lines) {
-      if (!l.text.trim().isEmpty()) {
-        return true;
-      }
-    }
-    return false;
+    return this.isToday(last) && last.parts < MAX_DAY_PAGES && this.diary.text(this.today).length() < Diary.MAX_CHARS;
   }
 
   private void flip(int dir) {
