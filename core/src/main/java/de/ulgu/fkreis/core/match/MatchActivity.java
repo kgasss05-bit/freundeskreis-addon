@@ -100,10 +100,6 @@ public class MatchActivity extends FkActivity {
   }
 
   private float[] option(int i, int count) {
-    if (count == 5) { // Aussagen: fuenf Kacheln nebeneinander
-      float gap = 5, tw = (this.cw - 32 - 4 * gap) / 5F, th = 60;
-      return new float[] {this.cx + 16 + i * (tw + gap), this.cy + this.ch - 36 - th, tw, th};
-    }
     float bh = 19, gap = 4, total = count * bh + (count - 1) * gap;
     float top = this.cy + this.ch - 34 - total;
     return new float[] {this.cx + 16, top + i * (bh + gap), this.cw - 32, bh};
@@ -143,41 +139,6 @@ public class MatchActivity extends FkActivity {
       G.text(s, n, nx + (d == 0 ? -1 : d == 1 ? 1 : 0), ny + (d == 2 ? -1 : d == 3 ? 1 : 0), 0xFF000000, sc, false);
     }
     G.text(s, n, nx, ny, 0xFF80FF20, sc, false);
-  }
-
-  /** Kleines Pixel-Herz fuer die Antwortkacheln, von unten her gefuellt. */
-  private void heart(Stack s, float cx, float cy, float u, float fill) {
-    String[] p = MatchCompareActivity.HEART;
-    int rows = p.length, cols = 13;
-    float x0 = cx - cols * u / 2F, y0 = cy - rows * u / 2F, level = rows * (1F - fill);
-    int empty = this.light() ? 0xFFFFFFFF : 0xFF3A3E48;
-    for (int y = 0; y < rows; y++) {
-      for (int x = 0; x < cols; x++) {
-        if (p[y].charAt(x) != '1') {
-          continue;
-        }
-        boolean border = y == 0 || x == 0 || x == cols - 1 || y == rows - 1 || p[y - 1].charAt(x) != '1' || p[y + 1].charAt(x) != '1'
-            || p[y].charAt(x - 1) != '1' || p[y].charAt(x + 1) != '1';
-        G.rect(s, x0 + x * u, y0 + y * u, u + 0.4F, u + 0.4F, border ? 0xFF7A1424 : y + 0.5F >= level ? 0xFFE23B4E : empty);
-      }
-    }
-  }
-
-  private void tile(Stack s, float[] r, int i, String label, float mx, float my, boolean chosen) {
-    boolean over = G.in(mx, my, r[0], r[1], r[2], r[3]);
-    float y = r[1] - (over || chosen ? 3 : 0);
-    G.rect(s, r[0] + 2, r[1] + 3, r[2], r[3], 0x40000000);
-    G.rect(s, r[0], y, r[2], r[3], chosen ? this.c[3] : over ? this.c[8] : this.c[7]);
-    G.rect(s, r[0], y + r[3] - 3, r[2], 3, chosen ? this.c[4] : G.shade(this.c[7], this.light() ? 0.86F : 0.5F));
-    G.outline(s, r[0], y, r[2], r[3], 1, chosen ? this.c[4] : G.alpha(this.c[4], 0.45F));
-    float u = over || chosen ? 2.3F : 2F;
-    this.heart(s, r[0] + r[2] / 2F, y + 19, u, i / 4F);
-    int ink = chosen ? (this.light() ? 0xFFFFFFFF : 0xFF1A1400) : this.c[5];
-    List<String> lines = G.wrap(label, r[2] - 6, 0.75F);
-    float ty = y + (lines.size() > 1 ? 37 : 41);
-    for (int k = 0; k < Math.min(2, lines.size()); k++) {
-      G.centered(s, lines.get(k), r[0] + r[2] / 2F, ty + k * 8, ink, 0.75F, false);
-    }
   }
 
   private float[] foot(int i) { // 0 links, 1 rechts, 2 Mitte
@@ -278,12 +239,10 @@ public class MatchActivity extends FkActivity {
     for (int i = 0; i < count; i++) {
       String label = fun ? L.t("match.fun" + nr + "o" + i) : L.t("match.scale" + i);
       float[] r = this.option(i, count);
+      this.button(s, r, label, mx, my, false, this.data.answers[slot] == i);
       if (fun) {
-        this.button(s, r, label, mx, my, false, this.data.answers[slot] == i);
         G.rect(s, r[0], r[1], r[3], r[3], this.c[4]);
         G.centered(s, String.valueOf((char) ('A' + i)), r[0] + r[3] / 2F, r[1] + 5, 0xFFFFFFFF, 1F, false);
-      } else {
-        this.tile(s, r, i, label, mx, my, this.data.answers[slot] == i);
       }
     }
     if (this.at > 0) {
