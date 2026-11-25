@@ -14,7 +14,7 @@ import java.util.Arrays;
 /**
  * Freunde-Match: 100 Fragen, davon 90 Aussagen (fuenf Stufen von "stimmt gar nicht" bis "stimmt genau")
  * und 10 Minecraft-Fragen mit drei Antworten, die zwischendrin kommen. Die Aussagen machen 99 % der
- * Uebereinstimmung aus, die Minecraft-Fragen zusammen 1 %. Gespeichert wird lokal in configs/fkreis/match.json.
+ * Uebereinstimmung aus, die Minecraft-Fragen zusammen 1 %. Gespeichert wird lokal in configs/fkreis/blockmatch.json.
  */
 public class MatchData {
 
@@ -36,7 +36,7 @@ public class MatchData {
   }
 
   private static final Gson GSON = new GsonBuilder().create();
-  private static final Path FILE = Paths.get("labymod-neo", "configs", "fkreis", "match.json");
+  private static final Path FILE = Paths.get("labymod-neo", "configs", "fkreis", "blockmatch.json");
   private static MatchData instance;
 
   /** Antwort je Platz: -1 offen, sonst 0..4 (Aussage) oder 0..2 (Minecraft-Frage). */

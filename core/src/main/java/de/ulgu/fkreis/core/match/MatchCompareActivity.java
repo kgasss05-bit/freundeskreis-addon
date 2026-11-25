@@ -120,7 +120,7 @@ public class MatchCompareActivity extends FkActivity {
     G.centered(s, L.t(this.ready ? "match.cmpClose" : "match.cmpOpen"), b[0] + b[2] / 2F, b[1] + 5, light ? 0xFFFFFFFF : 0xFF1A1400, 0.95F, false);
   }
 
-  static final String[] HEART = {
+  private static final String[] HEART = {
       "0011100011100", "0111110111110", "1111111111111", "1111111111111", "1111111111111", "1111111111111",
       "0111111111110", "0011111111100", "0001111111000", "0000111110000", "0000011100000", "0000001000000"};
 
