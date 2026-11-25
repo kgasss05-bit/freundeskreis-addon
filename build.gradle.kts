@@ -6,7 +6,7 @@ plugins {
 val versions = providers.gradleProperty("net.labymod.minecraft-versions").get().split(";")
 
 group = "de.ulgu.fkreis"
-version = providers.environmentVariable("VERSION").getOrElse("2.3.0")
+version = providers.environmentVariable("VERSION").getOrElse("2.0.0")
 
 labyMod {
     defaultPackageName = "de.ulgu.fkreis"
