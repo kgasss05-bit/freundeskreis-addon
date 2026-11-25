@@ -20,20 +20,6 @@ public class MixtapeSettings extends Config {
   @SwitchSetting
   private final ConfigProperty<Boolean> acceptGifts = new ConfigProperty<>(true);
 
-  /** Kleiner schwebender Rekorder oben rechts, solange eine Kassette laeuft. Aus: nur eine Zeile im Chat. */
-  @SwitchSetting
-  private final ConfigProperty<Boolean> hud = new ConfigProperty<>(true);
-
-  /** Schaltet die Groesse des schwebenden Rekorders weiter: klein, mittel, gross. */
-  @MethodOrder(after = "hud")
-  @ButtonSetting
-  public void hudSize(Setting setting) {
-    de.ulgu.fkreis.core.mixtape.Tapes box = de.ulgu.fkreis.core.mixtape.Tapes.get();
-    box.hudSize = (box.hudSize + 1) % 3;
-    box.save();
-    de.ulgu.fkreis.core.net.Net.notify(de.ulgu.fkreis.core.L.t("mixtape.title"), de.ulgu.fkreis.core.L.t("mixtape.hudSize" + box.hudSize), null);
-  }
-
   @MethodOrder(after = "acceptGifts")
   @ButtonSetting
   public void open(Setting setting) {
@@ -49,10 +35,6 @@ public class MixtapeSettings extends Config {
   @ButtonSetting
   public void background(Setting setting) {
     Screens.open(new de.ulgu.fkreis.core.gfx.BackdropPickerActivity(true));
-  }
-
-  public ConfigProperty<Boolean> hud() {
-    return this.hud;
   }
 
   public ConfigProperty<Boolean> acceptGifts() {

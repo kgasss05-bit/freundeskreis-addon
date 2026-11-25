@@ -57,6 +57,7 @@ public class FkreisAddon extends LabyAddon<FkreisConfig> {
     // HUD-Widget "Naechster Geburtstag"
     try {
       this.labyAPI().hudWidgetRegistry().register(new BirthdayWidget(this));
+      this.labyAPI().hudWidgetRegistry().register(new de.ulgu.fkreis.core.hud.MixtapeWidget());
     } catch (Throwable t) {
       this.logger().info("HUD-Widget konnte nicht registriert werden: " + t);
     }
@@ -70,8 +71,6 @@ public class FkreisAddon extends LabyAddon<FkreisConfig> {
 
     // Tagebuch: privat, nur ueber /fk oder die Taste – bewusst NICHT im Freundeskreis-Rad
     this.registerListener(new de.ulgu.fkreis.core.diary.DiaryTicker(this));
-    this.registerListener(new de.ulgu.fkreis.core.mixtape.Player());
-    this.registerListener(new de.ulgu.fkreis.core.zeitbrief.ZeitTicker(this));
 
     // Vanish: Spieler nur fuer dich ausblenden (Freundeskreis-Rad, /fk, Schriftrolle der Verbannten)
     de.ulgu.fkreis.core.vanish.Vanish vanish = de.ulgu.fkreis.core.vanish.Vanish.init(this);

@@ -42,7 +42,7 @@ public class FkreisConfig extends AddonConfig {
   private final MixtapeSettings mixtape = new MixtapeSettings();
 
   @IntroducedIn(namespace = "fkreis", value = "2.3.0")
-  private final TimeLetterSettings timeLetter = new TimeLetterSettings();
+  private final MatchSettings match = new MatchSettings();
 
   /** Ganz oben: Knopf "HUD-Widget einstellen". */
   @MethodOrder(after = "enabled")
@@ -81,8 +81,8 @@ public class FkreisConfig extends AddonConfig {
     return this.mixtape;
   }
 
-  public TimeLetterSettings timeLetter() {
-    return this.timeLetter;
+  public MatchSettings match() {
+    return this.match;
   }
 
   public DiarySettings diary() {

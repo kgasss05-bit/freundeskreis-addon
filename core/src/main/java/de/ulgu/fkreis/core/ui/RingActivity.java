@@ -62,6 +62,9 @@ public class RingActivity extends FkActivity {
     if (addon.configuration().album().inWheel().get()) {
       this.entries.add(new Entry(L.t("wheel.album"), () -> Screens.now(new AlbumActivity(uuid, name))));
     }
+    if (addon.configuration().match().inWheel().get() && !uuid.equals(Net.self())) {
+      this.entries.add(new Entry(L.t("wheel.match"), () -> Screens.now(new de.ulgu.fkreis.core.match.MatchCompareActivity(uuid, name))));
+    }
     if (addon.configuration().mixtape().inWheel().get() && !uuid.equals(Net.self())) {
       this.entries.add(new Entry(L.t("wheel.mixtape"), () -> Screens.now(new de.ulgu.fkreis.core.mixtape.TapeGiveActivity(uuid, name))));
     }

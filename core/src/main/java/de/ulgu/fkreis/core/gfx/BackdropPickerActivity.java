@@ -4,12 +4,12 @@ import de.ulgu.fkreis.core.L;
 import de.ulgu.fkreis.core.mixtape.Tapes;
 import de.ulgu.fkreis.core.ui.FkActivity;
 import de.ulgu.fkreis.core.ui.Screens;
-import de.ulgu.fkreis.core.zeitbrief.Letters;
+import de.ulgu.fkreis.core.match.MatchData;
 import net.labymod.api.client.gui.screen.activity.AutoActivity;
 import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.render.matrix.Stack;
 
-/** Aus den Addon-Einstellungen: das Holz fuer den Hintergrund der Mixtapes oder des Zeitbriefs aussuchen. */
+/** Aus den Addon-Einstellungen: das Holz fuer den Hintergrund der Mixtapes oder des Freunde-Match aussuchen. */
 @AutoActivity
 public class BackdropPickerActivity extends FkActivity {
 
@@ -21,7 +21,7 @@ public class BackdropPickerActivity extends FkActivity {
   }
 
   private String current() {
-    return this.mixtape ? Tapes.get().background : Letters.get().background;
+    return this.mixtape ? Tapes.get().background : MatchData.get().background;
   }
 
   private float[] cell(int i) {
@@ -33,7 +33,7 @@ public class BackdropPickerActivity extends FkActivity {
   @Override
   protected void draw(Stack s, float mx, float my) {
     Backdrop.draw(s, this.current(), this.x, this.y, this.w, this.h);
-    this.header(s, L.t(this.mixtape ? "backdrop.titleMixtape" : "backdrop.titleLetter"), mx, my);
+    this.header(s, L.t(this.mixtape ? "backdrop.titleMixtape" : "backdrop.titleMatch"), mx, my);
     for (int i = 0; i < Backdrop.IDS.length; i++) {
       float[] c = this.cell(i);
       boolean sel = Backdrop.IDS[i].equals(this.current()), over = G.in(mx, my, c[0], c[1], c[2], c[3]);
@@ -56,8 +56,8 @@ public class BackdropPickerActivity extends FkActivity {
           Tapes.get().background = Backdrop.IDS[i];
           Tapes.get().save();
         } else {
-          Letters.get().background = Backdrop.IDS[i];
-          Letters.get().save();
+          MatchData.get().background = Backdrop.IDS[i];
+          MatchData.get().save();
         }
         G.click();
         return true;

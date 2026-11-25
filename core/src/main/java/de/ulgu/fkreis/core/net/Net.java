@@ -226,6 +226,17 @@ public class Net {
     return this.album;
   }
 
+  private final MatchShare matchShare = new MatchShare();
+
+  public MatchShare matchShare() {
+    return this.matchShare;
+  }
+
+  /** Schickt eine Frage ohne Inhalt an alle Addon-Spieler auf dem Server. */
+  boolean sendToAll(String type) {
+    return this.broadcast(null, type, null);
+  }
+
   private final StickerShare stickerShare = new StickerShare();
 
   public StickerShare stickerShare() {
@@ -356,6 +367,14 @@ public class Net {
         store.save();
         notify(L.t("sticker.got.title"), L.t("sticker.got.text", fromName), G.head(from));
         G.sound("entity.player.levelup", 1.6F);
+        break;
+      }
+      case "FMQ": {
+        this.matchShare.onRequest(this, from);
+        break;
+      }
+      case "FMA": {
+        this.matchShare.onAnswer(from, fromName, payload);
         break;
       }
       case "MTO": {

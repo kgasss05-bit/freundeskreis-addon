@@ -39,7 +39,7 @@ public class HubActivity extends FkActivity {
     this.items.add(new Item(L.t("hub.coins"), 0xFF8A5AB8, () -> Screens.now(new CoinGalleryActivity())));
     this.items.add(new Item(L.t("hub.diary"), 0xFF8A5630, () -> Screens.now(new de.ulgu.fkreis.core.diary.DiaryActivity(false))));
     this.items.add(new Item(L.t("hub.mixtape"), 0xFF3A8FD8, () -> Screens.now(new de.ulgu.fkreis.core.mixtape.MixtapeActivity())));
-    this.items.add(new Item(L.t("hub.letter"), 0xFFB5241A, () -> Screens.now(new de.ulgu.fkreis.core.zeitbrief.LetterActivity())));
+    this.items.add(new Item(L.t("hub.match"), 0xFF2E9A8F, () -> Screens.now(new de.ulgu.fkreis.core.match.MatchActivity())));
     this.items.add(new Item(L.t("hub.vanish"), 0xFF7A1F1F, () -> {
       Screens.close();
       de.ulgu.fkreis.core.vanish.ui.Screens.openList();

@@ -39,8 +39,6 @@ public class Tapes {
   private static Tapes instance;
 
   public List<Tape> tapes = new ArrayList<>();
-  /** 0 klein, 1 mittel, 2 gross. */
-  public int hudSize = 1;
   public String background = "oak";
 
   public static Tapes get() {
