@@ -105,14 +105,13 @@ public final class Grotto {
     for (int r = 0; floor - r * t > y; r++) {
       for (int c = 0; c < cols; c++) {
         int hsh = hash(c + 3, r + 9);
-        String name = hsh % 9 == 0 ? "mossy_cobblestone" : hsh % 7 == 0 ? "andesite" : hsh % 5 == 0 ? "cobblestone"
-            : hsh % 11 == 0 ? "moss_block" : "stone";
+        String name = hsh % 7 == 0 ? "andesite" : hsh % 5 == 0 ? "cobblestone" : "stone";
         tile(s, name, ox + c * t, floor - (r + 1) * t, t);
       }
     }
-    // Boden davor: Stein und Moos, kein Weg
+    // Boden davor: Stein, kein Weg
     for (int c = 0; c < cols; c++) {
-      tile(s, hash(c, 77) % 3 == 0 ? "stone" : "moss_block", ox + c * t, floor, t);
+      tile(s, hash(c, 77) % 3 == 0 ? "cobblestone" : "stone", ox + c * t, floor, t);
     }
     G.rect(s, x, floor, w, 4, 0x70000000); // Schatten am Fuss der Wand
     // die Wand wird nach aussen und oben dunkler: so wirkt sie tief statt flach
@@ -134,7 +133,7 @@ public final class Grotto {
         for (int r = 0; r < ny; r++) {
           if (c == 0 || c == nx - 1 || r == 0) {
             int hsh = hash(c + i * 7, r + i * 3);
-            tile(s, hsh % 5 == 0 ? "mossy_cobblestone" : ring[i], lx + c * u, ly + r * u, u);
+            tile(s, ring[i], lx + c * u, ly + r * u, u);
           }
         }
       }
@@ -279,7 +278,7 @@ public final class Grotto {
       float ts = rh[r] * 1.7F, left = x + (w - ((int) (w / ts) + 2) * ts) / 2F;
       for (int c = 0; c * ts < w + ts; c++) {
         int hsh = hash(c, r + 50);
-        G.icon(s, block(hsh % 6 == 0 ? "moss_block" : hsh % 3 == 0 ? "cobbled_deepslate" : "deepslate"), left + c * ts, yy, ts + 0.5F, rh[r] + 0.5F);
+        G.icon(s, block(hsh % 3 == 0 ? "cobbled_deepslate" : "deepslate"), left + c * ts, yy, ts + 0.5F, rh[r] + 0.5F);
       }
       G.rect(s, x, yy, w, rh[r], G.alpha(0xFF000000, 0.46F - r * 0.12F));
       yy += rh[r];
