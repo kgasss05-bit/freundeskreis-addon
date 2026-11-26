@@ -48,19 +48,54 @@ public class StickerBookActivity extends FkActivity {
     G.sound("item.book.page_turn", 0.9F);
   }
 
-  /** Erst die gekauften Mob-Sticker (uuid = "mob:<id>"), dann die geschenkten Spieler-Sticker. */
+  private static final String PLAYER = "p:";
+
+  /** Beim Verschieben: welcher Sticker gerade an der Maus haengt (-1 = keiner). */
+  private int dragIndex = -1;
+  private float dragX, dragY;
+
+  /**
+   * Alle Sticker des Buchs. Im eigenen Buch in der selbst gewaehlten Reihenfolge (neue Spieler-Sticker ruecken vor die
+   * Mob-Sticker); in einem fremden Buch erst die Spieler-, dann die Mob-Sticker. Mob-Sticker haben uuid = "mob:<id>".
+   */
   private List<Sticker> stickers() {
     List<String> mobs = this.remote != null ? this.remote.mobs : MobStickers.owned();
     List<Sticker> players = this.remote != null ? this.remote.stickers : FkreisAddon.get().store().stickers;
-    if (mobs.isEmpty()) {
-      return players;
-    }
     List<Sticker> all = new java.util.ArrayList<>(mobs.size() + players.size());
-    for (String id : mobs) {
-      all.add(new Sticker(MobStickers.PREFIX + id, MobStickers.name(id), 0));
+    if (this.remote != null) {
+      all.addAll(players);
+      for (String id : mobs) {
+        all.add(new Sticker(MobStickers.PREFIX + id, MobStickers.name(id), 0));
+      }
+      return all;
     }
-    all.addAll(players);
+    java.util.Map<String, Sticker> byKey = new java.util.HashMap<>();
+    List<String> playerKeys = new java.util.ArrayList<>(), mobKeys = new java.util.ArrayList<>();
+    for (Sticker st : players) {
+      if (st != null && st.uuid != null && byKey.put(PLAYER + st.uuid, st) == null) {
+        playerKeys.add(PLAYER + st.uuid);
+      }
+    }
+    for (String id : mobs) {
+      String key = MobStickers.PREFIX + id;
+      byKey.put(key, new Sticker(key, MobStickers.name(id), 0));
+      mobKeys.add(key);
+    }
+    for (String key : de.ulgu.fkreis.core.loot.Loot.get().arrange(playerKeys, mobKeys)) {
+      all.add(byKey.get(key));
+    }
     return all;
+  }
+
+  /** Index des Stickers unter der Maus auf der aufgeschlagenen Doppelseite, sonst -1. */
+  private int indexAt(float mx, float my) {
+    for (int local = 0; local < PER_SPREAD; local++) {
+      float[] r = this.slot(local);
+      if (G.in(mx, my, r[0], r[1], r[2], r[3])) {
+        return this.spread * PER_SPREAD + local;
+      }
+    }
+    return -1;
   }
 
   private float[] shopButton() {
@@ -128,6 +163,13 @@ public class StickerBookActivity extends FkActivity {
       }
       Sticker st = list.get(idx);
       boolean over = G.in(mx, my, r[0], r[1], r[2], r[3]);
+      if (this.dragIndex >= 0 && over) { // hier wuerde der gezogene Sticker landen
+        G.outline(s, r[0] - 2, r[1] - 2, r[2] + 4, r[3] + 4, 2, 0xFFF2C94C);
+      }
+      if (idx == this.dragIndex) { // haengt gerade an der Maus
+        G.dashed(s, r[0], r[1], r[2], r[3], 0xFFCBB894);
+        continue;
+      }
       this.hover[local] = G.lerp(this.hover[local], over ? 1F : 0F, 0.25F);
       if (over && st.uuid.startsWith(MobStickers.PREFIX)) {
         String key = st.uuid.substring(MobStickers.PREFIX.length());
@@ -168,6 +210,12 @@ public class StickerBookActivity extends FkActivity {
       G.rect(s, b[0], b[1], b[2], b[3], over ? 0xFFFFE08A : 0xFFF2C94C);
       G.rect(s, b[0], b[1] + b[3] - 2, b[2], 2, 0xFF8A6A10);
       G.centered(s, G.fit(L.t("loot.shop"), b[2] - 6, 0.85F), b[0] + b[2] / 2F, b[1] + 4, 0xFF1A1400, 0.85F, false);
+    }
+
+    if (this.dragIndex >= 0 && this.dragIndex < list.size()) { // gezogener Sticker folgt der Maus
+      float[] r0 = this.slot(0);
+      this.sticker(s, list.get(this.dragIndex), new float[] {mx - r0[2] / 2F, my - r0[3] / 2F, r0[2], r0[3]}, 1F, 0);
+      tooltip = null;
     }
 
     if (tooltip != null) {
@@ -242,7 +290,29 @@ public class StickerBookActivity extends FkActivity {
       this.flipTo(1);
       return true;
     }
+    if (this.remote == null && left) { // eigenen Sticker aufnehmen, um ihn umzusortieren
+      int idx = this.indexAt(mx, my);
+      if (idx >= 0 && idx < this.stickers().size()) {
+        this.dragIndex = idx;
+        G.sound("item.book.page_turn", 1.6F);
+        return true;
+      }
+    }
     return false;
+  }
+
+  @Override
+  protected boolean onRelease(float mx, float my) {
+    if (this.dragIndex < 0) {
+      return false;
+    }
+    int size = this.stickers().size(), target = this.indexAt(mx, my);
+    if (target >= 0) {
+      de.ulgu.fkreis.core.loot.Loot.get().move(this.dragIndex, Math.min(target, size - 1));
+      G.sound("entity.item_frame.add_item", 1F);
+    }
+    this.dragIndex = -1;
+    return true;
   }
 
   @Override

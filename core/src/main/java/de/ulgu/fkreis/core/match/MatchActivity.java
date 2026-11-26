@@ -290,6 +290,27 @@ public class MatchActivity extends FkActivity {
     this.button(s, this.foot(1), L.t(sureSend ? "match.sendSure" : "match.send"), mx, my, true, false);
   }
 
+  private static final String[] HEART = {
+      "0011100011100", "0111110111110", "1111111111111", "1111111111111", "1111111111111", "1111111111111",
+      "0111111111110", "0011111111100", "0001111111000", "0000111110000", "0000011100000", "0000001000000"};
+
+  /** Pixel-Herz, von unten her bis {@code fill} gefuellt; u = Bildschirmpixel je Herzpixel. */
+  private void heart(Stack s, float hx, float hy, float u, float fill) {
+    int rows = HEART.length, cols = 13;
+    float x0 = hx - cols * u / 2F, y0 = hy - rows * u / 2F, level = rows * (1F - fill);
+    int empty = this.light() ? G.shade(this.c[7], 0.9F) : 0xFF3A3E48;
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        if (HEART[y].charAt(x) != '1') {
+          continue;
+        }
+        boolean border = y == 0 || x == 0 || x == cols - 1 || y == rows - 1 || HEART[y - 1].charAt(x) != '1' || HEART[y + 1].charAt(x) != '1'
+            || HEART[y].charAt(x - 1) != '1' || HEART[y].charAt(x + 1) != '1';
+        G.rect(s, x0 + x * u, y0 + y * u, u + 0.4F, u + 0.4F, border ? 0xFF7A1424 : y + 0.5F >= level ? 0xFFE23B4E : empty);
+      }
+    }
+  }
+
   private void drawResult(Stack s, float mx, float my) {
     if (!this.data.submitted) {
       this.drawConfirm(s, mx, my);
@@ -297,32 +318,69 @@ public class MatchActivity extends FkActivity {
     }
     MatchShare share = FkreisAddon.get().net().matchShare();
     List<MatchShare.Hit> hits = share.hits();
-    long since = System.currentTimeMillis() - share.searchedAt();
-    G.text(s, L.t("match.resultTitle"), this.cx + 16, this.cy + 14, this.c[3], 1.2F, !this.light());
-    float y = this.cy + 34;
-    if (hits.isEmpty()) {
-      String msg = since < 4000 ? L.t("match.searching") + "...".substring(0, 1 + (int) (since / 400 % 3)) : L.t("match.nobody");
-      for (String line : G.wrap(msg, this.cw - 36, 1F)) {
-        G.text(s, line, this.cx + 18, y, this.c[5], 1F, false);
-        y += 11;
+    long now = System.currentTimeMillis(), since = now - share.searchedAt();
+    float mid = this.cx + this.cw / 2F, hy = this.cy + this.ch * 0.36F, hs = Math.min(56F, this.ch * 0.24F);
+    java.util.UUID me = de.ulgu.fkreis.core.net.Net.self();
+    G.centered(s, L.t("match.resultTitle"), mid, this.cy + 16, this.c[3], 1.4F, !this.light());
+    if (hits.isEmpty() && since < 4000) {
+      // Suche: der eigene Kopf in der Mitte sendet Ringe aus, darunter laeuft ein Balken aus Bloecken
+      for (int k = 0; k < 3; k++) {
+        float e = ((now / 1400F) + k / 3F) % 1F, rr = hs * 0.6F + e * hs * 1.5F;
+        G.outline(s, mid - rr, hy - rr, rr * 2, rr * 2, 2, G.alpha(this.c[3], 0.75F * (1F - e)));
+      }
+      for (int k = 0; k < 6; k++) { // rundherum blitzen moegliche Treffer auf
+        double a = k * Math.PI / 3 + now / 2600.0;
+        float e = (float) Math.abs(Math.sin(now / 500.0 + k * 1.1));
+        float qx = mid + (float) Math.cos(a) * hs * 2.1F, qy = hy + (float) Math.sin(a) * hs * 1.2F;
+        G.rect(s, qx - 8, qy - 8, 16, 16, G.alpha(this.c[7], 0.35F + 0.5F * e));
+        G.centered(s, "?", qx, qy - 4, G.alpha(this.c[5], 0.4F + 0.6F * e), 1F, false);
+      }
+      G.rect(s, mid - hs / 2F - 3, hy - hs / 2F - 3, hs + 6, hs + 6, this.c[3]);
+      G.icon(s, G.head(me), mid - hs / 2F, hy - hs / 2F, hs, hs);
+      float done = Math.min(1F, since / 4000F);
+      int blocks = 20;
+      float bw = 9, gap = 2, total = blocks * bw + (blocks - 1) * gap, bx = mid - total / 2F, by = hy + hs * 1.9F;
+      G.rect(s, bx - 3, by - 3, total + 6, 16, this.light() ? this.c[4] : 0xFF000000);
+      G.rect(s, bx - 2, by - 2, total + 4, 14, this.light() ? 0xFFFFFFFF : 0xFF14161C);
+      float sweep = (now % 900) / 900F * (blocks + 4) - 2;
+      for (int i = 0; i < blocks; i++) {
+        boolean on = i < Math.round(done * blocks);
+        int col = on ? G.mix(this.c[3], 0xFFFFFFFF, 0.55F * Math.max(0F, 1F - Math.abs(i - sweep) / 2F)) : this.light() ? G.shade(this.c[7], 0.92F) : 0xFF2A2E38;
+        G.rect(s, bx + i * (bw + gap), by, bw, 10, col);
+      }
+      G.centered(s, L.t("match.searching") + "...".substring(0, 1 + (int) (since / 400 % 3)), mid, by + 20, this.c[5], 1F, false);
+    } else if (hits.isEmpty()) {
+      // niemand gefunden: der eigene Kopf, daneben ein leerer Platz
+      float off = hs * 1.3F;
+      G.rect(s, mid - off - hs / 2F - 3, hy - hs / 2F - 3, hs + 6, hs + 6, this.c[3]);
+      G.icon(s, G.head(me), mid - off - hs / 2F, hy - hs / 2F, hs, hs);
+      G.dashed(s, mid + off - hs / 2F - 3, hy - hs / 2F - 3, hs + 6, hs + 6, this.c[6]);
+      G.centered(s, "?", mid + off, hy - 10, this.c[6], 2.4F, false);
+      G.centered(s, "\u2026", mid, hy - 6, this.c[6], 1.6F, false);
+      float y = hy + hs * 0.9F;
+      for (String line : G.wrap(L.t("match.nobody"), this.cw - 60, 1F)) {
+        G.centered(s, line, mid, y, this.c[5], 1F, false);
+        y += 12;
       }
     } else {
-      // der beste Treffer gross, die anderen als Liste
+      // Treffer: beide Koepfe, dazwischen das Herz mit der Prozentzahl
       MatchShare.Hit top = hits.get(0);
-      G.rect(s, this.cx + 16, y, this.cw - 32, 44, this.c[7]);
-      G.outline(s, this.cx + 16, y, this.cw - 32, 44, 1, this.c[3]);
-      G.icon(s, G.head(top.uuid), this.cx + 22, y + 6, 32, 32);
-      G.text(s, L.t("match.best"), this.cx + 62, y + 7, this.c[6], 0.8F, false);
-      G.text(s, top.name, this.cx + 62, y + 19, this.c[5], 1.3F, !this.light());
-      String pct = top.percent + " %";
-      G.text(s, pct, this.cx + this.cw - 24 - G.width(pct) * 2F, y + 12, this.c[3], 2F, !this.light());
-      y += 54;
-      for (String line : G.wrap(L.t("match.oneHint"), this.cw - 36, 0.9F)) {
-        G.text(s, line, this.cx + 18, y, this.c[6], 0.9F, false);
+      float off = hs * 1.7F, pop = G.easeBack(Math.min(1F, (now - this.openedAt) / 500F));
+      G.rect(s, mid - off - hs / 2F - 3, hy - hs / 2F - 3, hs + 6, hs + 6, this.c[3]);
+      G.icon(s, G.head(me), mid - off - hs / 2F, hy - hs / 2F, hs, hs);
+      G.rect(s, mid + off - hs / 2F - 3, hy - hs / 2F - 3, hs + 6, hs + 6, this.c[3]);
+      G.icon(s, G.head(top.uuid), mid + off - hs / 2F, hy - hs / 2F, hs, hs);
+      this.heart(s, mid, hy, Math.max(2F, hs / 13F) * pop, top.percent / 100F);
+      G.centered(s, top.percent + "%", mid, hy - 7, 0xFFFFFFFF, 1.5F, true);
+      G.centered(s, L.t("match.best"), mid, hy + hs * 0.85F, this.c[6], 0.9F, false);
+      G.centered(s, top.name, mid, hy + hs * 0.85F + 13, this.c[5], 1.6F, !this.light());
+      float y = hy + hs * 0.85F + 38;
+      for (String line : G.wrap(L.t("match.oneHint"), this.cw - 60, 0.9F)) {
+        G.centered(s, line, mid, y, this.c[6], 0.9F, false);
         y += 10;
       }
     }
-    this.button(s, this.foot(1), L.t("match.again"), mx, my, true, false);
+    this.button(s, this.foot(2), L.t("match.again"), mx, my, true, false);
   }
 
   @Override
@@ -411,7 +469,7 @@ public class MatchActivity extends FkActivity {
     }
     float[] f2 = this.foot(2);
     if (this.data.submitted) { // abgesendet: nichts mehr zu aendern, nur neu suchen
-      if (G.in(mx, my, f1[0], f1[1], f1[2], f1[3])) {
+      if (G.in(mx, my, f2[0], f2[1], f2[2], f2[3])) {
         this.search();
         G.click();
       }

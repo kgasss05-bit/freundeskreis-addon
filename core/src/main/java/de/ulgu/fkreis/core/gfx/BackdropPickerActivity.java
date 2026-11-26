@@ -15,6 +15,16 @@ import net.labymod.api.client.render.matrix.Stack;
 public class BackdropPickerActivity extends FkActivity {
 
   private final boolean mixtape;
+  /** true = Hintergrund des Gluecksrads. */
+  private boolean wheel;
+
+  /** Hintergrund des Gluecksrads aussuchen. */
+  public static BackdropPickerActivity forWheel() {
+    BackdropPickerActivity a = new BackdropPickerActivity(false);
+    a.wheel = true;
+    Loot.get().grant("wood:" + Loot.get().background);
+    return a;
+  }
 
   public BackdropPickerActivity(boolean mixtape) {
     this.mixtape = mixtape;
@@ -23,7 +33,7 @@ public class BackdropPickerActivity extends FkActivity {
   }
 
   private String current() {
-    return this.mixtape ? Tapes.get().background : MatchData.get().background;
+    return this.wheel ? Loot.get().background : this.mixtape ? Tapes.get().background : MatchData.get().background;
   }
 
   private float[] cell(int i) {
@@ -35,7 +45,7 @@ public class BackdropPickerActivity extends FkActivity {
   @Override
   protected void draw(Stack s, float mx, float my) {
     Backdrop.draw(s, this.current(), this.x, this.y, this.w, this.h);
-    this.header(s, L.t(this.mixtape ? "backdrop.titleMixtape" : "backdrop.titleMatch"), mx, my);
+    this.header(s, L.t(this.wheel ? "backdrop.titleWheel" : this.mixtape ? "backdrop.titleMixtape" : "backdrop.titleMatch"), mx, my);
     for (int i = 0; i < Backdrop.IDS.length; i++) {
       float[] c = this.cell(i);
       boolean sel = Backdrop.IDS[i].equals(this.current()), over = G.in(mx, my, c[0], c[1], c[2], c[3]);
@@ -66,7 +76,10 @@ public class BackdropPickerActivity extends FkActivity {
           }
           G.sound("entity.experience_orb.pickup", 1.2F);
         }
-        if (this.mixtape) {
+        if (this.wheel) {
+          Loot.get().background = Backdrop.IDS[i];
+          Loot.get().save();
+        } else if (this.mixtape) {
           Tapes.get().background = Backdrop.IDS[i];
           Tapes.get().save();
         } else {

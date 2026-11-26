@@ -283,30 +283,34 @@
         }
       },
       "loot": {
-        "name": "Daily chest",
-        "description": "Once a day you open a chest with 1 to 10 Holy Coins. Use them to unlock woods for the backgrounds and to buy in the sticker shop. Holy Coins exist only in this addon, they are free and cannot be bought.",
+        "name": "Wheel of fortune",
+        "description": "Once a day you spin the wheel and get 1 to 10 Holy Coins. Use them to unlock woods for the backgrounds and to buy in the sticker shop. Holy Coins exist only in this addon, they are free and cannot be bought.",
         "daily": {
-          "name": "Open when joining a server",
-          "description": "Opens the chest by itself once a day, shortly after you joined a server."
+          "name": "Reminder",
+          "description": "Reminds you once a day with a notification, shortly after you joined a server."
         },
         "open": {
-          "name": "Open chest",
-          "description": "Opens the daily chest.",
+          "name": "Open wheel",
+          "description": "Opens the daily wheel of fortune.",
           "text": "Open"
+        },
+        "background": {
+          "name": "Background",
+          "description": "Pick the wood shown behind the wheel of fortune.",
+          "text": "Choose"
         }
       },
       "shop": {
-        "name": "Sticker shop",
-        "description": "Every day four random mob stickers are on offer, the same for all players. You pay with Holy Coins from the daily chest, bought stickers go into your sticker book.",
+        "name": "Sticker cave",
+        "description": "Every day four random mob stickers are on offer, the same for all players. You pay with Holy Coins from the daily wheel of fortune, bought stickers go into your sticker book.",
         "open": {
           "name": "Open shop",
           "description": "Opens today's offer.",
           "text": "Open"
         },
-        "gallery": {
-          "name": "View all stickers",
-          "description": "Shows all mob stickers to browse. Right-click switches to the holo variant.",
-          "text": "View"
+        "inHub": {
+          "name": "Show in /fk menu",
+          "description": "Shows the sticker cave as an entry in the /fk menu."
         }
       }
     },
@@ -494,8 +498,8 @@
         "diaryCover": "Diary cover",
         "mixtape": "Mixtapes",
         "match": "Blockmatch",
-        "loot": "Daily chest",
-        "shop": "Sticker shop"
+        "loot": "Wheel of fortune",
+        "shop": "Sticker cave"
       },
       "vanish": {
         "wheel": {
@@ -642,7 +646,8 @@
         "bamboo": "Bamboo",
         "crimson": "Crimson",
         "warped": "Warped",
-        "pale_oak": "Pale oak"
+        "pale_oak": "Pale oak",
+        "titleWheel": "Wheel background"
       },
       "match": {
         "title": "Blockmatch",
@@ -833,17 +838,21 @@
         "theme6": "Lemon"
       },
       "loot": {
-        "title": "Daily chest",
+        "title": "Wheel of fortune",
         "name": "Holy Coins",
-        "tomorrow": "The next chest is waiting tomorrow.",
-        "shop": "Sticker shop",
+        "tomorrow": "You can spin again tomorrow.",
+        "shop": "Sticker cave",
         "tier0": "Mob sticker · common",
         "tier1": "Mob sticker · better",
         "tier2": "Mob sticker · very good",
         "tier3": "Mob sticker · extremely rare",
         "holo": "Holo sticker",
         "next": "New stickers in %s h",
-        "gallery": "All stickers"
+        "spin": "Spin",
+        "ready": "Your wheel of fortune is ready! Open it with /fk.",
+        "bought": "Bought",
+        "buy": "Buy · %s",
+        "poor": "Not enough coins"
       }
     },
     "hudWidget": {

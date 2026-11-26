@@ -9,10 +9,10 @@ import net.labymod.api.configuration.loader.property.ConfigProperty;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.util.MethodOrder;
 
-/** Unterseite "Taegliche Truhe". */
+/** Unterseite "Gluecksrad". */
 public class LootSettings extends Config {
 
-  /** Truhe einmal am Tag von selbst oeffnen, kurz nachdem man einen Server betreten hat. */
+  /** Einmal am Tag nach dem Betreten eines Servers an das Gluecksrad erinnern. */
   @SwitchSetting
   private final ConfigProperty<Boolean> daily = new ConfigProperty<>(true);
 
@@ -20,6 +20,13 @@ public class LootSettings extends Config {
   @ButtonSetting
   public void open(Setting setting) {
     Screens.open(new LootActivity());
+  }
+
+  /** Holz hinter dem Gluecksrad aussuchen. */
+  @MethodOrder(after = "open")
+  @ButtonSetting
+  public void background(Setting setting) {
+    Screens.open(de.ulgu.fkreis.core.gfx.BackdropPickerActivity.forWheel());
   }
 
   public ConfigProperty<Boolean> daily() {

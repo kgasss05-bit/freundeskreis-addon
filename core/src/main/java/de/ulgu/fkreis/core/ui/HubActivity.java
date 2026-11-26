@@ -41,7 +41,9 @@ public class HubActivity extends FkActivity {
     this.items.add(new Item(L.t("hub.mixtape"), 0xFF3A8FD8, () -> Screens.now(new de.ulgu.fkreis.core.mixtape.MixtapeActivity())));
     this.items.add(new Item(L.t("hub.match"), 0xFF2E9A8F, () -> Screens.now(new de.ulgu.fkreis.core.match.MatchActivity())));
     this.items.add(new Item(L.t("hub.loot"), 0xFFF2C94C, () -> Screens.now(new de.ulgu.fkreis.core.loot.LootActivity())));
-    this.items.add(new Item(L.t("hub.shop"), 0xFFE07B39, () -> Screens.now(new de.ulgu.fkreis.core.loot.StickerShopActivity())));
+    if (de.ulgu.fkreis.core.FkreisAddon.get().configuration().shop().inHub().get()) {
+      this.items.add(new Item(L.t("hub.shop"), 0xFFE07B39, () -> Screens.now(new de.ulgu.fkreis.core.loot.StickerShopActivity())));
+    }
     this.items.add(new Item(L.t("hub.vanish"), 0xFF7A1F1F, () -> {
       Screens.close();
       de.ulgu.fkreis.core.vanish.ui.Screens.openList();

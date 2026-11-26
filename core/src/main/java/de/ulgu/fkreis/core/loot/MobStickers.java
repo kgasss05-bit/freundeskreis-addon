@@ -10,7 +10,7 @@ import net.labymod.api.client.render.matrix.Stack;
 
 /**
  * Mob-Sticker, die man mit Holy-Coins kauft. Das Gesicht kommt zur Laufzeit aus den Texturen des Spiels;
- * der Sticker selbst hat einen eigenen farbigen Glanzrahmen mit Muenzstempel, damit er nie mit einem
+ * der Sticker selbst hat einen eigenen farbigen Glanzrahmen, damit er nie mit einem
  * gewoehnlichen Spielerkopf-Sticker verwechselt wird (auch nicht, wenn jemand einen Mob-Skin traegt).
  */
 public final class MobStickers {
@@ -28,6 +28,9 @@ public final class MobStickers {
       "ghast", "happy_ghast", "allay", "axolotl", "sniffer", "creaking", "breeze", "piglin_brute", "mooshroom", "panda", "copper_golem",
       "zoglin", "skeleton_horse", "zombie_horse", "zombie_nautilus", "camel_husk"};
   private static final String[] RARE = {"villager", "warden", "wither", "ender_dragon", "elder_guardian", "illusioner"};
+
+  /** Diese Koepfe sehen als Sticker nicht gut aus (Fische, Pferde, flache Schnauzen): sie gibt es nicht als Sticker. */
+  private static final String[] REMOVED = {};
 
   private static final String[][] TIERS = build();
 
@@ -47,11 +50,21 @@ public final class MobStickers {
     List<String> rest = new ArrayList<>();
     for (de.ulgu.fkreis.core.data.Mob mob : Mobs.all()) {
       String id = mob.id();
-      if (!id.equals("none") && !in(BETTER, id) && !in(GREAT, id) && !in(RARE, id)) {
+      if (!id.equals("none") && !in(REMOVED, id) && !in(BETTER, id) && !in(GREAT, id) && !in(RARE, id)) {
         rest.add(id);
       }
     }
-    return new String[][] {rest.toArray(new String[0]), BETTER, GREAT, RARE};
+    return new String[][] {rest.toArray(new String[0]), kept(BETTER), kept(GREAT), kept(RARE)};
+  }
+
+  private static String[] kept(String[] list) {
+    List<String> out = new ArrayList<>();
+    for (String id : list) {
+      if (!in(REMOVED, id)) {
+        out.add(id);
+      }
+    }
+    return out.toArray(new String[0]);
   }
 
   private static boolean in(String[] list, String id) {
@@ -157,12 +170,11 @@ public final class MobStickers {
 
   /**
    * Zeichnet den Sticker in das Feld (x, y, w, h): weisser Stanzrand mit abgeschnittenen Ecken, farbige Glanzflaeche,
-   * Mob-Gesicht, Muenzstempel unten rechts, Name darunter. {@code locked} = noch nicht gekauft (abgedunkelt).
+   * Mob-Gesicht, Name darunter. {@code locked} = noch nicht gekauft (abgedunkelt).
    */
   public static void draw(Stack s, String key, float x, float y, float w, float h, float hover, boolean locked) {
     String mob = id(key);
     boolean holo = holo(key);
-    long now = System.currentTimeMillis();
     int t = Math.max(0, tierOf(mob));
     float ly = y - 2F * hover;
     G.rect(s, x + 2, ly + 3, w, h, 0x40000000);
@@ -170,14 +182,14 @@ public final class MobStickers {
     G.rect(s, x + 2, ly, w - 4, h, 0xFFFFFFFF);
     G.rect(s, x, ly + 2, w, h - 4, 0xFFFFFFFF);
     // Rahmen in der Farbe der Seltenheit
-    G.rect(s, x + 2, ly + 2, w - 4, h - 4, holo ? G.mix(0xFFB9C2D0, 0xFFFFFFFF, 0.5F + 0.5F * (float) Math.sin(now / 420.0)) : RIM[t]);
+    G.rect(s, x + 2, ly + 2, w - 4, h - 4, holo ? 0xFFDDE3EE : RIM[t]);
     float ix = x + 4, iy = ly + 4, iw = w - 8, ih = h - 16;
     G.rect(s, ix, iy, iw, ih, BACK[t]);
     if (holo) { // Glitzerfolie: silbrig heller Grund, darauf viele kleine Punkte, die durcheinander aufblinken
       G.rect(s, ix, iy, iw, ih, G.mix(RIM[t], 0xFF7C879E, 0.7F));
       G.rect(s, ix, iy, iw, ih / 2F, 0x18FFFFFF);
       for (int i = 0; i < 90; i++) {
-        float a = (float) Math.sin(now / 170.0 + i * 2.39);
+        float a = (float) Math.sin(i * 2.39); // fest, nichts bewegt sich: ein Sticker ist eingeklebt
         if (a <= 0F) {
           continue;
         }
@@ -187,7 +199,7 @@ public final class MobStickers {
       }
     }
     // schraege Glanzstreifen; bei den seltensten wandern sie
-    float shift = t == 3 || holo ? (now % 2400) / 2400F * (iw + ih) : iw * 0.35F;
+    float shift = iw * 0.35F;
     for (float yy = 0; yy < ih; yy += 2) {
       float sx = shift - yy;
       for (int k = 0; k < 2; k++) {
@@ -200,18 +212,51 @@ public final class MobStickers {
     // Kopf aus der Spieltextur; nur wo noch kein Ausschnitt eingetragen ist, steht das Spawn-Ei aus dem Spiel
     float ratio = MobFaces.ratio(mob), fh = Math.min(ih - 6, (iw - 6) * ratio), fw = fh / ratio;
     float fx = ix + (iw - fw) / 2F, fy = iy + (ih - fh) / 2F;
-    if (MobFaces.has(mob)) {
-      G.rect(s, fx - 1, fy - 1, fw + 2, fh + 2, G.shade(RIM[t], 0.55F));
-      MobFaces.draw(s, mob, fx, fy, fw, fh);
-    } else {
+    // Ab 1.21.5 hat jedes Mob ein eigenes Spawn-Ei: das kommt auf den Sticker, dahinter ein Schein in der Farbe der Seltenheit.
+    // Auf aelteren Versionen gibt es diese Bilder nicht, dort steht der Kopf.
+    if (MobFaces.variants()) {
+      float ccx = ix + iw / 2F, ccy = iy + ih / 2F, rad = Math.min(iw, ih) / 2F;
+      G.rect(s, ix, iy, iw, ih, G.mix(RIM[t], 0xFF101018, 0.72F));
+      for (int k = 0; k < 6; k++) { // weicher Schein: Rauten, die nach aussen blasser werden
+        float rr = rad * (1.05F - k * 0.15F);
+        for (float dy = -rr; dy < rr; dy += 2) {
+          float half = rr - Math.abs(dy + 1);
+          G.rect(s, Math.max(ix, ccx - half), ccy + dy, Math.min(iw, half * 2), 2, G.alpha(RIM[t], 0.10F + k * 0.02F));
+        }
+      }
+      int rays = 4 + t * 4; // je seltener, desto mehr und laengere Strahlen
+      for (int k = 0; k < rays; k++) {
+        double ang = Math.PI * 2 * k / rays;
+        float len = rad * (k % 2 == 0 ? 1.25F : 0.95F);
+        for (float d = rad * 0.35F; d < len; d += 1.5F) {
+          float rx = ccx + (float) Math.cos(ang) * d, ry = ccy + (float) Math.sin(ang) * d;
+          if (rx > ix && rx < ix + iw - 2 && ry > iy && ry < iy + ih - 2) {
+            G.rect(s, rx, ry, 2, 2, G.alpha(G.mix(RIM[t], 0xFFFFFFFF, 0.55F), 0.75F * (1F - d / len)));
+          }
+        }
+      }
       Icon egg = Mobs.byId(mob).icon();
+      float es = Math.min(iw, ih) * 0.84F;
       if (egg != null) {
-        G.icon(s, egg, fx, fy, fw, fh);
+        G.icon(s, egg, ccx - es / 2F, ccy - es / 2F, es, es);
+      } else if (MobFaces.has(mob)) { // der Illusionist hat kein Spawn-Ei
+        MobFaces.draw(s, mob, fx, fy, fw, fh);
+      }
+    } else {
+      // gleicher Rahmen fuer alle: dunkler Rand, darin der Kopf aus der Spieltextur
+      G.rect(s, fx - 1, fy - 1, fw + 2, fh + 2, G.shade(RIM[t], 0.55F));
+      if (MobFaces.has(mob)) {
+        MobFaces.draw(s, mob, fx, fy, fw, fh);
+      } else {
+        Icon egg = Mobs.byId(mob).icon();
+        if (egg != null) {
+          G.icon(s, egg, fx + 1, fy + 1, fw - 2, fh - 2);
+        }
       }
     }
     if (holo) { // Glitzer: kleine Sterne, die an festen Stellen aufblinken
       for (int i = 0; i < 7; i++) {
-        float a = (float) Math.sin(now / 260.0 + i * 1.7);
+        float a = 0.5F + 0.5F * (float) Math.sin(i * 1.7);
         if (a > 0.35F) {
           float gx = ix + ((i * 37) % 100) / 100F * (iw - 4) + 2, gy = iy + ((i * 61) % 100) / 100F * (ih - 4) + 2;
           G.rect(s, gx - 0.5F, gy - 3, 1, 6, G.alpha(0xFFFFFFFF, a));
@@ -219,8 +264,6 @@ public final class MobStickers {
         }
       }
     }
-    // Muenzstempel: daran erkennt man den gekauften Sticker
-    Loot.coin(s, x + w - 13, ly + h - 24, 1.5F);
     G.centered(s, G.fit(name(mob), w - 4, 0.8F), x + w / 2F, ly + h - 10, 0xFFFFFFFF, 0.8F, true);
     if (locked) {
       G.rect(s, x, ly, w, h, 0xB0000000);

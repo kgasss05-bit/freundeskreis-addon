@@ -5,211 +5,224 @@ import de.ulgu.fkreis.core.gfx.Backdrop;
 import de.ulgu.fkreis.core.gfx.G;
 import de.ulgu.fkreis.core.ui.FkActivity;
 import de.ulgu.fkreis.core.ui.Screens;
-import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.activity.AutoActivity;
 import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.render.matrix.Stack;
-import net.labymod.api.client.resources.ResourceLocation;
 
 /**
- * Die taegliche Truhe: anklicken, sie springt auf und viele Muenzen fallen heraus. Man sammelt sie mit dem Beutel
- * (Bundle-Textur aus dem Spiel) ein, der am Mauszeiger haengt und in Gold zeigt, wie viele Holy-Coins er enthaelt.
+ * Das taegliche Gluecksrad: einmal am Tag drehen, das Feld unter dem Zeiger (1 bis 10) wird sofort als Holy-Coins
+ * gutgeschrieben. An seltenen Tagen glitzert eines der Felder; wer dort landet, bekommt zusaetzlich einen Holo-Sticker.
+ * Was gewonnen wird, steht schon beim Klick fest ({@link Loot#open()}); das Rad dreht sich nur dorthin.
  */
 @AutoActivity
 public class LootActivity extends FkActivity {
 
-  private static final float U = 4F; // Bildschirmpixel je Truhenpixel
-  private static final int CW = 34, BODY = 18, LID = 10;
+  /** Reihenfolge der Felder im Uhrzeigersinn, grosse und kleine Zahlen gemischt. */
+  private static final int[] FIELDS = {1, 6, 3, 9, 2, 7, 10, 4, 8, 5};
+  private static final int[] COLORS = {0xFFC8372D, 0xFF2F6FB5, 0xFFE08A1E, 0xFF2E9A5B, 0xFF8E44AD, 0xFFD4A017, 0xFF1F8A8A, 0xFFC2417A, 0xFF4A58C4, 0xFF6FA82E};
+  private static final float FIELD_DEG = 360F / FIELDS.length;
+  private static final long SPIN_MS = 5200L;
 
   private final Loot loot = Loot.get();
-  private final boolean wasOpenable = this.loot.canOpen();
-  private static final Icon BUNDLE = Icon.texture(ResourceLocation.create("minecraft", "textures/item/bundle.png"));
-
-  private long wonAt, doneAt;
-  private int win;
-  /** Die herausgefallenen Muenzen: Landeplatz, Flugdauer, Startverzoegerung und ob sie schon im Beutel sind. */
-  private float[] px = new float[0], py = new float[0], dur = new float[0], delay = new float[0];
-  private boolean[] got = new boolean[0];
-  private int collected;
-  /** Der Beutel liegt unten in der Ecke, bis man ihn anklickt; dann haengt er am Mauszeiger und sammelt Muenzen ein. */
-  private boolean holding;
-  /** Der Holo-Sticker wird direkt mit der Maus angeklickt (ohne Beutel). */
-  private boolean holoTaken;
-  private float holoX, holoY, holoW, holoH;
+  private boolean wasOpenable = this.loot.canOpen();
+  private long spunAt;
+  private float fromDeg, toDeg;
+  private int lastTick = -1;
+  private boolean landed;
+  private long idleFrom;
+  /** Index des Glitzerfeldes von heute in FIELDS, -1 wenn heute keines glitzert. */
+  private int glitter = indexOf(this.loot.glitterNumber());
 
   public LootActivity() {
     G.click();
+  }
+
+  private static int indexOf(int number) {
+    for (int i = 0; i < FIELDS.length; i++) {
+      if (FIELDS[i] == number) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private float radius() {
+    return Math.max(50F, Math.min(190F, Math.min(this.w / 2F - 40, (this.h - 34) / 2F - 20))); // fuellt den Bildschirm, auch auf grossen Monitoren
   }
 
   private float cx() {
     return this.x + this.w / 2F;
   }
 
-  private float top() { // Oberkante des Truhenkoerpers
-    return this.y + this.h / 2F + 6;
+  private float cy() {
+    return this.y + 34 + (this.h - 34) / 2F + 2;
   }
 
-  /** Verteilt die Muenzen rund um die Truhe: genau so viele, wie man gewonnen hat. */
-  private void scatter() {
-    int n = this.win;
-    java.util.Random rnd = new java.util.Random(System.nanoTime());
-    this.px = new float[n];
-    this.py = new float[n];
-    this.dur = new float[n];
-    this.delay = new float[n];
-    this.got = new boolean[n];
-    this.collected = 0;
-    float reach = Math.min(this.w / 2F - 24, 190), by = this.top();
-    for (int i = 0; i < n; i++) {
-      float side = rnd.nextBoolean() ? 1F : -1F;
-      this.px[i] = this.cx() + side * (20 + rnd.nextFloat() * (reach - 20));
-      this.py[i] = Math.min(this.y + this.h - 16, by + 8 + rnd.nextFloat() * (BODY * U + 34));
-      this.dur[i] = 0.55F + rnd.nextFloat() * 0.45F;
-      this.delay[i] = 0.15F + i * 0.07F;
-    }
+  /** Mitte eines Feldes auf dem Rad in Grad (0 = oben, im Uhrzeigersinn), ohne Drehung. */
+  private static float center(int field) {
+    return field * FIELD_DEG + FIELD_DEG / 2F;
   }
 
-  /** So viele Holy-Coins sind sichtbar schon im Beutel (gutgeschrieben wird sofort beim Oeffnen, das hier ist nur die Anzeige). */
-  private int shown() {
-    if (this.wonAt == 0 || this.got.length == 0) {
-      return this.loot.coins;
+  /** Welches Feld liegt bei diesem Winkel auf dem Rad (Index in FIELDS). */
+  private static int fieldAt(float deg) {
+    float d = ((deg % 360F) + 360F) % 360F;
+    return Math.min(FIELDS.length - 1, (int) (d / FIELD_DEG));
+  }
+
+  /** Aktuelle Drehung des Rades in Grad. */
+  private float rotation(long now) {
+    if (this.spunAt == 0) {
+      return this.wasOpenable ? this.toDeg + ((now - this.idleFrom) % 36000L) / 100F : this.toDeg; // wartet: dreht sich ganz langsam
     }
-    return this.loot.coins - this.win + this.collected;
+    float t = Math.min(1F, (now - this.spunAt) / (float) SPIN_MS);
+    float e = 1F - (float) Math.pow(1F - t, 4);
+    return this.fromDeg + (this.toDeg - this.fromDeg) * e;
+  }
+
+  private void spin() {
+    long now = System.currentTimeMillis();
+    this.fromDeg = this.rotation(now) % 360F;
+    if (!this.loot.open()) {
+      return;
+    }
+    // dieser Winkel auf dem Rad soll am Ende oben unter dem Zeiger stehen
+    float target = center(Math.max(0, indexOf(this.loot.lastWin))) + (float) (Math.random() - 0.5) * FIELD_DEG * 0.6F;
+    // Rad um -target drehen bringt das Feld nach oben; dazu sechs volle Umdrehungen
+    float end = 360F - target;
+    this.toDeg = this.fromDeg + 360F * 6 + (((end - this.fromDeg) % 360F) + 360F) % 360F;
+    this.spunAt = now;
+    this.lastTick = -1;
+    G.sound("block.note_block.pling", 0.8F);
   }
 
   @Override
   protected void draw(Stack s, float mx, float my) {
-    Backdrop.draw(s, "dark_oak", this.x, this.y, this.w, this.h);
-    G.rect(s, this.x, this.y, this.w, this.h, 0x50000000);
+    Backdrop.draw(s, this.loot.background, this.x, this.y, this.w, this.h);
     this.header(s, L.t("loot.title"), mx, my);
+    Loot.balance(s, this.x + this.w - 10, this.y + 38);
     long now = System.currentTimeMillis();
-    boolean opened = this.wonAt > 0 || !this.wasOpenable;
-    float t = this.wonAt > 0 ? (now - this.wonAt) / 1000F : opened ? 9F : 0F;
-    float lift = G.easeBack(Math.min(1F, t / 0.35F)); // 0 = zu, 1 = Deckel oben
-    float bob = opened ? 0F : (float) Math.sin(now / 300.0) * 3F;
-    float bx = this.cx() - CW * U / 2F, by = this.top() + bob;
+    float rot = this.rotation(now), r = this.radius(), cx = this.cx(), cy = this.cy();
+    boolean spinning = this.spunAt > 0 && now - this.spunAt < SPIN_MS;
 
-    if (opened) { // Lichtstrahlen aus der Truhe
-      float grow = Math.min(1F, t / 0.5F);
-      for (int i = 0; i < 9; i++) {
-        float wHalf = 16 + i * 13 * grow, yy = by - 6 - i * 16 * grow;
-        G.rect(s, this.cx() - wHalf, yy, wHalf * 2, 17, G.alpha(0xFFFFE9A0, (0.34F - i * 0.035F) * grow));
+    if (this.spunAt > 0) { // Klacken, wenn eine Feldgrenze unter dem Zeiger durchlaeuft
+      int tick = (int) Math.floor(rot / FIELD_DEG);
+      if (spinning && tick != this.lastTick) {
+        this.lastTick = tick;
+        G.sound("block.note_block.hat", 1.2F);
       }
-    } else { // geschlossen: leises Funkeln ringsum
-      for (int i = 0; i < 6; i++) {
-        float a = (float) Math.abs(Math.sin(now / 500.0 + i * 1.3));
-        float qx = this.cx() + (float) Math.cos(i * 1.05 + now / 2400.0) * 92, qy = by + 20 + (float) Math.sin(i * 1.05 + now / 2400.0) * 56;
-        G.rect(s, qx - 1, qy - 4, 2, 8, G.alpha(0xFFFFF2A8, a));
-        G.rect(s, qx - 4, qy - 1, 8, 2, G.alpha(0xFFFFF2A8, a));
+      if (!spinning && !this.landed) {
+        this.landed = true;
+        G.sound(this.loot.lastHolo.isEmpty() ? "entity.player.levelup" : "ui.toast.challenge_complete", 1.3F);
       }
     }
-    this.chest(s, bx, by, lift);
 
-    // die Muenzen: fliegen im Bogen heraus, bleiben liegen und verschwinden im Beutel, sobald er sie beruehrt
-    for (int i = 0; i < this.got.length; i++) {
-      if (this.got[i]) {
-        continue;
+    // das Rad schwebt frei in der Mitte: weicher Lichtschein dahinter, keine Halterung
+    for (int k = 0; k < 5; k++) {
+      float rr = r + 20 - k * 4;
+      for (float gy = -rr; gy < rr; gy += 4) {
+        float hf = (float) Math.sqrt(rr * rr - gy * gy);
+        G.rect(s, cx - hf, cy + gy, hf * 2, 4, 0x08FFE9A0);
       }
-      float e = (t - this.delay[i]) / this.dur[i];
-      if (e < 0F) {
-        continue;
-      }
-      if (e < 1F) {
-        float sx = this.cx(), sy = by - 6;
-        float cxp = sx + (this.px[i] - sx) * e, cyp = sy + (this.py[i] - sy) * e - (float) Math.sin(Math.PI * e) * 110F;
-        Loot.coin(s, cxp - 6, cyp - 6, 2F);
-        continue;
-      }
-      G.rect(s, this.px[i] - 5, this.py[i] + 5, 12, 3, 0x50000000);
-      Loot.coin(s, this.px[i] - 6, this.py[i] - 6, 2F);
-      if (Math.abs(Math.sin(now / 350.0 + i * 0.9)) > 0.93) { // kurzes Aufblitzen
-        G.rect(s, this.px[i] - 1, this.py[i] - 9, 2, 6, 0xFFFFFFFF);
-        G.rect(s, this.px[i] - 3, this.py[i] - 7, 6, 2, 0xFFFFFFFF);
-      }
-      if (this.holding && Math.abs(mx - this.px[i]) < 20 && Math.abs(my - this.py[i]) < 20) {
-        this.got[i] = true;
-        this.collected++;
-        G.sound("entity.experience_orb.pickup", 0.7F + 0.9F * this.collected / this.got.length);
-        if (this.collected == this.got.length) {
-          this.doneAt = now;
-          G.sound("entity.player.levelup", 1.3F);
+    }
+    float hubR = Math.max(18F, r * 0.25F);
+    boolean canSpin = this.spunAt == 0 && this.wasOpenable;
+    boolean hubOver = canSpin && (mx - cx) * (mx - cx) + (my - cy) * (my - cy) < hubR * hubR;
+    // Rad: Zeile fuer Zeile in kleinen Bloecken, jeder Block bekommt die Farbe seines Feldes
+    float px = 2F;
+    int frame = (int) (now / 110L);
+    for (float yy = -r; yy < r; yy += px) {
+      float half = (float) Math.sqrt(Math.max(0F, r * r - (yy + px / 2F) * (yy + px / 2F)));
+      int runColor = 0;
+      float runStart = -half;
+      for (float xx = -half; xx <= half; xx += px) {
+        float dist = (float) Math.sqrt(xx * xx + yy * yy);
+        int col;
+        if (xx + px > half || dist > r - 2) {
+          col = 0xFF2B1A0C; // aeusserer Rand
+        } else if (dist > r - 9) {
+          col = dist > r - 4 ? 0xFFB8861E : dist > r - 7 ? 0xFFF2C94C : 0xFF8A6A10; // goldener Reif
+        } else if (dist < hubR) {
+          col = dist > hubR - 2.5F ? 0xFF2B1A0C : dist > hubR - 6 ? 0xFF8A6A10 : hubOver ? 0xFFFFE27A : yy < -hubR * 0.3F ? 0xFFFFE9A0 : 0xFFF2C94C; // goldene Nabe, zugleich der Knopf
+        } else {
+          float deg = (((float) Math.toDegrees(Math.atan2(xx, -yy)) - rot) % 360F + 360F) % 360F;
+          int f = fieldAt(deg);
+          float in = deg % FIELD_DEG;
+          if (in < 1.4F || in > FIELD_DEG - 0.4F) {
+            col = 0xFFF2C94C; // goldene Trennlinie
+          } else {
+            col = dist > r - 20 ? G.mix(COLORS[f], 0xFF000000, 0.28F) : dist < r * 0.4F ? G.mix(COLORS[f], 0xFFFFFFFF, 0.22F) : COLORS[f];
+            if (f == this.glitter) { // Glitzerfeld: zufaellige Punkte blitzen weiss auf
+              int hsh = ((int) xx * 73856093) ^ ((int) yy * 19349663) ^ (frame * 83492791);
+              int v = (hsh ^ (hsh >>> 13)) & 0xFF;
+              if (v > 204) {
+                col = v > 238 ? 0xFFFFFFFF : G.mix(COLORS[f], 0xFFFFFFFF, 0.6F);
+              }
+            }
+          }
+        }
+        if (col != runColor) {
+          if (runColor != 0) {
+            G.rect(s, cx + runStart, cy + yy, xx - runStart, px, runColor);
+          }
+          runColor = col;
+          runStart = xx;
         }
       }
-    }
-    boolean holo = this.wonAt > 0 && !this.loot.lastHolo.isEmpty();
-    if (holo) { // statt Muenzen steigt die Holo-Karte direkt aus der Truhe; man nimmt sie mit einem Klick
-      float rise = G.easeOut(Math.max(0F, Math.min(1F, (t - 0.2F) / 0.7F)));
-      float hw = 22 + 38 * rise, hh = hw * 1.25F;
-      float hx = this.cx() - hw / 2F, hy = by - 10 - (hh + 44) * rise + (rise >= 1F ? (float) Math.sin(now / 400.0) * 4F : 0F);
-      boolean over = rise >= 1F && !this.holoTaken && G.in(mx, my, hx, hy, hw, hh);
-      MobStickers.draw(s, this.loot.lastHolo + "*", hx, hy, hw, hh, over ? 2F : 0F, false);
-      this.holoX = hx;
-      this.holoY = hy;
-      this.holoW = rise >= 1F ? hw : 0F;
-      this.holoH = hh;
-      if (this.holoTaken) {
-        G.centered(s, L.t("loot.holo"), this.cx(), hy - 16, 0xFFFFFFFF, 1.4F, true);
+      if (runColor != 0) {
+        G.rect(s, cx + runStart, cy + yy, half - runStart + px, px, runColor);
       }
-    } else if (this.doneAt > 0) {
-      float pop = G.easeBack(Math.min(1F, (now - this.doneAt) / 350F));
-      float sc = 4F * pop;
-      G.centered(s, "+" + this.win, this.cx(), by - 96 - 4 * sc, 0xFFF2C94C, sc, true);
-      G.centered(s, L.t("loot.name"), this.cx(), by - 56, 0xFFFFFFFF, 1.2F, true);
-    } else if (opened && this.wonAt == 0) {
-      G.centered(s, L.t("loot.tomorrow"), this.cx(), by - 40, 0xFFFFFFFF, 1.1F, true);
     }
+    // Lichter auf dem Reif blinken abwechselnd
+    for (int k = 0; k < 20; k++) {
+      double a = Math.toRadians(k * 18);
+      float bx = cx + (float) Math.sin(a) * (r - 5.5F), by = cy - (float) Math.cos(a) * (r - 5.5F);
+      G.rect(s, bx - 2, by - 2, 4, 4, 0xFF2B1A0C);
+      G.rect(s, bx - 1, by - 1, 2, 2, (k + now / 160L) % 2 == 0 ? 0xFFFFFFFF : 0xFFC9881A);
+    }
+    // Zahlen stehen aufrecht in der Mitte ihres Feldes, mit schwarzem Rand
+    for (int i = 0; i < FIELDS.length; i++) {
+      double a = Math.toRadians(center(i) + rot);
+      float nx = cx + (float) Math.sin(a) * r * 0.68F, ny = cy - (float) Math.cos(a) * r * 0.68F - 4 * Math.max(1.4F, r / 62F);
+      String n = String.valueOf(FIELDS[i]);
+      float ns = Math.max(1.4F, r / 62F);
+      for (int d = 0; d < 4; d++) {
+        G.centered(s, n, nx + (d == 0 ? -1 : d == 1 ? 1 : 0), ny + (d == 2 ? -1 : d == 3 ? 1 : 0), 0xFF000000, ns, false);
+      }
+      G.centered(s, n, nx, ny, i == this.glitter ? 0xFFFFF2A8 : 0xFFFFFFFF, ns, false);
+    }
+    if (canSpin) { // "Drehen" steht auf der goldenen Mitte
+      String spin = L.t("loot.spin").toUpperCase();
+      float sc = Math.min(2F, (hubR * 2 - 12) / Math.max(1F, G.width(spin)));
+      G.centered(s, spin, cx, cy - 4 * sc, 0xFF2B1A0C, sc, false);
+    }
+    // Zeiger: haengt am obersten Licht des Reifs und ragt nach unten in das Rad hinein
+    float pt = cy - r + 5;
+    for (int i = 0; i < 8; i++) {
+      G.rect(s, cx - 8 + i, pt + i * 2, 16 - 2 * i, 2, 0xFF2B1A0C);
+      if (i < 7) {
+        G.rect(s, cx - 6 + i, pt + i * 2, 12 - 2 * i, 2, i < 2 ? 0xFFFFF2A8 : 0xFFF2C94C);
+      }
+    }
+    G.rect(s, cx - 4, cy - r + 1, 8, 8, 0xFF2B1A0C);
+    G.rect(s, cx - 3, cy - r + 2, 6, 6, (now / 160L) % 2 == 0 ? 0xFFFFFFFF : 0xFFFFD27A);
 
-    // der Beutel: liegt unten rechts in der Ecke, nach einem Klick haengt er am Mauszeiger; in Gold steht der Inhalt darauf
-    float bs = 40;
-    float[] corner = this.corner();
-    float bxm = this.holding ? mx - bs / 2F + 6 : corner[0], bym = this.holding ? my - bs / 2F + 8 : corner[1];
-    if (!this.holding && this.wonAt > 0 && this.collected < this.got.length) { // Muenzen liegen bereit: Beutel wippt
-      bym -= (float) Math.abs(Math.sin(now / 250.0)) * 4F;
+    // Ergebnis
+    if (this.landed) {
+      float pop = G.easeBack(Math.min(1F, (now - this.spunAt - SPIN_MS) / 350F));
+      boolean holo = !this.loot.lastHolo.isEmpty();
+      float sc = 4F * pop, tx = holo ? cx - 50 : cx;
+      G.rect(s, this.x, cy - (holo ? 48 : 34), this.w, holo ? 96 : 68, G.alpha(0xFF000000, 0.6F * pop));
+      G.centered(s, "+" + this.loot.lastWin, tx, cy - 6 - 4 * sc, 0xFFF2C94C, sc, true);
+      G.centered(s, L.t("loot.name"), tx, cy + 16, 0xFFFFFFFF, 1.2F, true);
+      if (holo) { // Glitzerfeld getroffen: die Coins und dazu der Holo-Sticker
+        float hw = 50 * pop, hh = hw * 1.25F;
+        MobStickers.draw(s, this.loot.lastHolo + "*", cx + 30, cy - hh / 2F - 4, hw, hh, 0F, false);
+        G.centered(s, "+ " + L.t("loot.holo"), cx + 55, cy + 32, 0xFFFFFFFF, 1F, true);
+      }
+    } else if (this.spunAt == 0 && !this.wasOpenable) {
+      G.rect(s, this.x, cy - 12, this.w, 24, 0x8C000000);
+      G.centered(s, L.t("loot.tomorrow"), cx, cy - 4, 0xFFFFFFFF, 1.1F, true);
     }
-    G.icon(s, BUNDLE, bxm, bym, bs, bs);
-    String n = String.valueOf(this.shown());
-    float nx = bxm + bs / 2F;
-    for (int d = 0; d < 4; d++) {
-      G.centered(s, n, nx + (d == 0 ? -1 : d == 1 ? 1 : 0), bym + bs - 15 + (d == 2 ? -1 : d == 3 ? 1 : 0), 0xFF000000, 1.1F, false);
-    }
-    G.centered(s, n, nx, bym + bs - 15, 0xFFF2C94C, 1.1F, false);
-  }
-
-  private float[] corner() {
-    return new float[] {this.x + this.w - 52, this.y + this.h - 50};
-  }
-
-  /** Pixel-Truhe; lift 0 = geschlossen, 1 = Deckel aufgeklappt. */
-  private void chest(Stack s, float bx, float by, float lift) {
-    int edge = 0xFF2B1A0C, wood = 0xFF8A5A2B, dark = 0xFF6E451F, light = 0xFFA9743A, gold = 0xFFF2C94C, goldD = 0xFFB8891A;
-    float w = CW * U, bh = BODY * U;
-    G.rect(s, bx + 6, by + bh - 2, w - 4, 8, 0x60000000); // Schatten
-    // Koerper
-    G.rect(s, bx, by, w, bh, edge);
-    G.rect(s, bx + U, by + U, w - 2 * U, bh - 2 * U, wood);
-    for (int i = 1; i < 4; i++) {
-      G.rect(s, bx + U, by + i * 4.4F * U, w - 2 * U, U / 2F, dark);
-    }
-    G.rect(s, bx + U, by + U, w - 2 * U, U, light);
-    G.rect(s, bx + 4 * U, by, 2 * U, bh, goldD);
-    G.rect(s, bx + w - 6 * U, by, 2 * U, bh, goldD);
-    if (lift > 0.05F) { // Innenraum mit Goldschein
-      G.rect(s, bx + U, by - 2 * U * lift, w - 2 * U, 3 * U * lift, 0xFF1A0F06);
-      G.rect(s, bx + 2 * U, by - U * lift, w - 4 * U, 2 * U * lift, G.alpha(0xFFFFE27A, 0.9F));
-    }
-    // Deckel: wandert beim Oeffnen nach oben und wird flacher (aufgeklappt von vorn gesehen)
-    float lh = LID * U * (1F - 0.45F * lift), ly = by - lh - (LID * 1.25F * U) * lift;
-    G.rect(s, bx - U / 2F, ly, w + U, lh, edge);
-    G.rect(s, bx + U / 2F, ly + U, w - U, lh - 2 * U, lift > 0.5F ? dark : wood);
-    G.rect(s, bx + U / 2F, ly + U, w - U, U, light);
-    G.rect(s, bx + 4 * U, ly, 2 * U, lh, goldD);
-    G.rect(s, bx + w - 6 * U, ly, 2 * U, lh, goldD);
-    G.rect(s, bx - U / 2F, ly + lh - U, w + U, U, goldD);
-    // Schloss
-    float lx = bx + w / 2F - 2.5F * U, lyy = lift > 0.05F ? ly + lh - 2 * U : by - 2 * U;
-    G.rect(s, lx, lyy, 5 * U, 6 * U, edge);
-    G.rect(s, lx + U, lyy + U, 3 * U, 4 * U, gold);
-    G.rect(s, lx + 2 * U, lyy + 2 * U, U, 2 * U, edge);
   }
 
   @Override
@@ -218,31 +231,23 @@ public class LootActivity extends FkActivity {
       Screens.close();
       return true;
     }
-    float[] corner = this.corner();
-    if (G.in(mx, my, corner[0] - 4, corner[1] - 4, 48, 48) || (this.holding && G.in(mx, my, this.x + this.w - 60, this.y + this.h - 58, 60, 58))) {
-      this.holding = !this.holding; // Beutel aufnehmen oder wieder ablegen
-      G.sound("item.bundle.insert", 1F);
-      return true;
-    }
-    if (this.holoW > 0 && !this.holoTaken && G.in(mx, my, this.holoX, this.holoY, this.holoW, this.holoH)) {
-      this.holoTaken = true;
-      this.doneAt = System.currentTimeMillis();
-      G.sound("ui.toast.challenge_complete", 1F);
-      return true;
-    }
-    if (this.wonAt == 0 && this.loot.canOpen()) {
-      float bx = this.cx() - CW * U / 2F, by = this.top();
-      if (G.in(mx, my, bx - 10, by - LID * U - 14, CW * U + 20, (BODY + LID) * U + 28)) {
-        if (this.loot.open()) {
-          this.win = this.loot.lastWin;
-          this.wonAt = System.currentTimeMillis();
-          this.scatter();
-          G.sound("block.chest.open", 1F);
-        }
+    if (this.spunAt == 0 && this.loot.canOpen()) { // nur die goldene Mitte dreht das Rad
+      float dx = mx - this.cx(), dy = my - this.cy(), hubR = Math.max(18F, this.radius() * 0.25F) + 3;
+      if (dx * dx + dy * dy < hubR * hubR) {
+        this.spin();
       }
       return true;
     }
-    if (this.wonAt == 0 || (this.doneAt > 0 && System.currentTimeMillis() - this.doneAt > 900)) {
+    if (this.landed && this.loot.canOpen()) { // noch Drehungen uebrig (Test): Rad wieder freigeben
+      this.fromDeg = this.toDeg % 360F;
+      this.toDeg = this.fromDeg;
+      this.spunAt = 0;
+      this.landed = false;
+      this.wasOpenable = true;
+      this.idleFrom = System.currentTimeMillis();
+      this.glitter = indexOf(this.loot.glitterNumber());
+      G.click();
+    } else if (this.spunAt == 0 || this.landed) {
       Screens.close();
     }
     return true;

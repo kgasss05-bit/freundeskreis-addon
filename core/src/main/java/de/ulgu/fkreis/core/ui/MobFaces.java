@@ -46,7 +46,7 @@ public final class MobFaces {
   }
 
   /** true ab Minecraft 1.21.5: seitdem liegen Kuh, Schwein und Huhn als Klima-Varianten in eigenen Dateien. */
-  private static boolean variants() {
+  public static boolean variants() {
     try {
       String[] v = Laby.labyAPI().minecraft().getVersion().split("\\.");
       int major = Integer.parseInt(v[0]), minor = v.length > 1 ? Integer.parseInt(v[1]) : 0, patch = v.length > 2 ? Integer.parseInt(v[2]) : 0;
@@ -102,48 +102,65 @@ public final class MobFaces {
     many("ocelot", "textures/entity/cat/ocelot.png", 64, 32, 5, 4, new float[][] {{5, 5, 5, 4, 0, 0}, {2, 26, 3, 2, 1, 2}});
     one("panda", "textures/entity/panda/panda.png", 9, 15, 13, 10, 64, 64);
     one("polar_bear", "textures/entity/bear/polarbear.png", 7, 7, 7, 7, 128, 64);
-    one("rabbit", "textures/entity/rabbit/brown.png", 37, 5, 5, 4, 64, 32);
-    one("goat", "textures/entity/goat/goat.png", 44, 56, 5, 7, 64, 64);
     one("bee", "textures/entity/bee/bee.png", 10, 10, 7, 7, 64, 64);
+    // Monster und Wasserwesen
+    one("spider", "textures/entity/spider/spider.png", 40, 12, 8, 8, 64, 32);
+    one("cave_spider", "textures/entity/spider/cave_spider.png", 40, 12, 8, 8, 64, 32);
+    one("ghast", "textures/entity/ghast/ghast.png", 16, 16, 16, 16, 64, 32);
+    // --- Mobs ohne klassischen Kopf: Vorderansicht aus den vordersten Teilen uebereinandergelegt (im Spiel pruefen) ---
+    many("silverfish", "textures/entity/silverfish.png", 64, 32, 4, 3, new float[][] {{2, 6, 4, 3, 0, 0}, {2, 2, 3, 2, 0.5F, 1}});
+    many("endermite", "textures/entity/endermite.png", 64, 32, 6, 4, new float[][] {{5, 10, 6, 4, 0, 0}, {2, 2, 4, 3, 1, 1}});
+    many("ender_dragon", "textures/entity/enderdragon/dragon.png", 256, 256, 16, 16, new float[][] {{128, 46, 16, 16, 0, 0}, {192, 60, 12, 5, 2, 8}});
+    many("slime", "textures/entity/slime/slime.png", 64, 32, 8, 8,
+        new float[][] {{6, 22, 6, 6, 1, 1}, {34, 2, 2, 2, 0.75F, 2}, {34, 6, 2, 2, 5.25F, 2}, {33, 9, 1, 1, 4, 5}, {8, 8, 8, 8, 0, 0}});
+    many("magma_cube", "textures/entity/slime/magmacube.png", 64, 32, 8, 8, new float[][] {
+        {8, 8, 8, 1, 0, 0}, {8, 9, 8, 1, 0, 1}, {32, 18, 8, 1, 0, 2}, {32, 27, 8, 1, 0, 3},
+        {8, 12, 8, 1, 0, 4}, {8, 13, 8, 1, 0, 5}, {8, 14, 8, 1, 0, 6}, {8, 15, 8, 1, 0, 7}});
+    many("guardian", "textures/entity/guardian.png", 64, 64, 12, 12, new float[][] {{16, 16, 12, 12, 0, 0}, {9, 1, 2, 2, 5, 5}});
+    many("elder_guardian", "textures/entity/guardian_elder.png", 64, 64, 12, 12, new float[][] {{16, 16, 12, 12, 0, 0}, {9, 1, 2, 2, 5, 5}});
+    one("strider", "textures/entity/strider/strider.png", 16, 16, 16, 14, 64, 128);
+    one("shulker", "textures/entity/shulker/shulker.png", 6, 58, 6, 6, 64, 64);
+    one("phantom", "textures/entity/phantom.png", 5, 5, 7, 3, 64, 64);
+    one("hoglin", "textures/entity/hoglin/hoglin.png", 80, 20, 14, 6, 128, 64);
+    one("zoglin", "textures/entity/hoglin/zoglin.png", 80, 20, 14, 6, 128, 64);
+    one("squid", "textures/entity/squid/squid.png", 12, 12, 12, 16, 64, 32);
+    one("glow_squid", "textures/entity/squid/glow_squid.png", 12, 12, 12, 16, 64, 32);
+    one("pufferfish", "textures/entity/fish/pufferfish.png", 8, 8, 8, 8, 32, 32);
+    one("cod", "textures/entity/fish/cod.png", 7, 7, 2, 4, 32, 32);
+    one("salmon", "textures/entity/fish/salmon.png", 8, 8, 3, 5, 32, 32);
+    one("tropical_fish", "textures/entity/fish/tropical_a.png", 6, 6, 2, 3, 32, 32);
+    one("tadpole", "textures/entity/tadpole/tadpole.png", 3, 3, 3, 2, 16, 16);
+    one("goat", "textures/entity/goat/goat.png", 44, 56, 5, 7, 64, 64);
     one("parrot", "textures/entity/parrot/parrot_red_blue.png", 4, 4, 2, 3, 32, 32);
     one("turtle", "textures/entity/turtle/big_sea_turtle.png", 9, 6, 6, 5, 128, 64);
     one("axolotl", "textures/entity/axolotl/axolotl_lucy.png", 5, 6, 8, 5, 64, 64);
     one("dolphin", "textures/entity/dolphin.png", 6, 6, 8, 7, 64, 64);
-    many("llama", "textures/entity/llama/creamy.png", 128, 64, 8, 8, new float[][] {{6, 20, 8, 8, 0, 0}, {9, 9, 4, 4, 2, 2}});
+    one("rabbit", "textures/entity/rabbit/brown.png", 37, 5, 5, 4, 64, 32);
+    float[][] llama = {{6, 20, 8, 8, 0, 0}, {9, 9, 4, 4, 2, 3}};
+    many("llama", "textures/entity/llama/creamy.png", 128, 64, 8, 8, llama);
+    many("trader_llama", "textures/entity/llama/trader_llama.png", 128, 64, 8, 8, llama);
     float[][] horse = {{7, 20, 6, 5, 0, 0}, {5, 30, 4, 5, 1, 5}};
     many("horse", "textures/entity/horse/horse_brown.png", 64, 64, 6, 10, horse);
     many("donkey", "textures/entity/horse/donkey.png", 64, 64, 6, 10, horse);
     many("mule", "textures/entity/horse/mule.png", 64, 64, 6, 10, horse);
     many("skeleton_horse", "textures/entity/horse/horse_skeleton.png", 64, 64, 6, 10, horse);
     many("zombie_horse", "textures/entity/horse/horse_zombie.png", 64, 64, 6, 10, horse);
-    // Monster und Wasserwesen
-    one("spider", "textures/entity/spider/spider.png", 40, 12, 8, 8, 64, 32);
-    one("cave_spider", "textures/entity/spider/cave_spider.png", 40, 12, 8, 8, 64, 32);
-    one("ghast", "textures/entity/ghast/ghast.png", 16, 16, 16, 16, 64, 32);
-    one("strider", "textures/entity/strider/strider.png", 16, 16, 16, 14, 64, 128);
-    one("shulker", "textures/entity/shulker/shulker.png", 6, 58, 6, 6, 64, 64);
-    one("phantom", "textures/entity/phantom.png", 5, 5, 7, 3, 64, 64);
-    one("hoglin", "textures/entity/hoglin/hoglin.png", 80, 20, 14, 6, 128, 64);
-    one("zoglin", "textures/entity/hoglin/zoglin.png", 80, 20, 14, 6, 128, 64);
-    many("guardian", "textures/entity/guardian.png", 64, 64, 12, 12, new float[][] {{16, 16, 12, 12, 0, 0}, {9, 1, 2, 2, 5, 5}});
-    many("elder_guardian", "textures/entity/guardian_elder.png", 64, 64, 12, 12, new float[][] {{16, 16, 12, 12, 0, 0}, {9, 1, 2, 2, 5, 5}});
-    many("slime", "textures/entity/slime/slime.png", 64, 32, 8, 8,
-        new float[][] {{6, 22, 6, 6, 1, 1}, {34, 2, 2, 2, 0.75F, 2}, {34, 6, 2, 2, 5.25F, 2}, {33, 9, 1, 1, 4, 5}, {8, 8, 8, 8, 0, 0}});
-    many("magma_cube", "textures/entity/slime/magmacube.png", 64, 32, 8, 8, new float[][] {
-        {8, 8, 8, 1, 0, 0}, {8, 9, 8, 1, 0, 1}, {32, 18, 8, 1, 0, 2}, {32, 27, 8, 1, 0, 3},
-        {8, 12, 8, 1, 0, 4}, {8, 13, 8, 1, 0, 5}, {8, 14, 8, 1, 0, 6}, {8, 15, 8, 1, 0, 7}});
-    one("squid", "textures/entity/squid/squid.png", 12, 12, 12, 16, 64, 32);
-    one("glow_squid", "textures/entity/squid/glow_squid.png", 12, 12, 12, 16, 64, 32);
-    one("pufferfish", "textures/entity/fish/pufferfish.png", 8, 8, 8, 8, 32, 32);
-    one("cod", "textures/entity/fish/cod.png", 0, 7, 7, 4, 32, 32);
-    one("salmon", "textures/entity/fish/salmon.png", 0, 8, 8, 5, 32, 32);
-    one("tropical_fish", "textures/entity/fish/tropical_a.png", 0, 6, 6, 3, 32, 32);
-    one("tadpole", "textures/entity/tadpole/tadpole.png", 3, 3, 3, 2, 16, 16);
-    // Silberfisch und Endermite haben keinen Kopf: die vordersten beiden Koerperscheiben uebereinander
-    many("silverfish", "textures/entity/silverfish.png", 64, 32, 4, 3, new float[][] {{2, 6, 4, 3, 0, 0}, {2, 2, 3, 2, 0.5F, 1}});
-    many("endermite", "textures/entity/endermite.png", 64, 32, 6, 4, new float[][] {{5, 10, 6, 4, 0, 0}, {2, 2, 4, 3, 1, 1}});
-    // Enderdrache von der Seite: Schnauze vor dem Schaedel
-    many("ender_dragon", "textures/entity/enderdragon/dragon.png", 256, 256, 32, 16, new float[][] {{112, 46, 16, 16, 16, 0}, {176, 60, 16, 5, 0, 7}});
+    float[][] camel = {{28, 7, 7, 8, 0, 0}, {56, 6, 5, 5, 1, 3}};
+    many("camel", "textures/entity/camel/camel.png", 128, 128, 7, 8, camel);
+    many("camel_husk", "textures/entity/camel/camel_husk.png", 128, 128, 7, 8, camel);
+    // Guerteltier: Kopf von vorn, links und rechts je die Spalte der Kopfseite mit dem Auge (ohne Ohren, die liessen eine Luecke)
+    many("armadillo", "textures/entity/armadillo.png", 64, 64, 5, 5, new float[][] {{44, 17, 1, 5, 0, 0}, {45, 17, 3, 5, 1, 0}, {48, 17, 1, 5, 4, 0}});
+    // Fledermaus: nur der Kopf (4 x 3), darueber die beiden Ohren
+    many("bat", "textures/entity/bat.png", 32, 32, 6, 7, new float[][] {{1, 15, 3, 5, 0, 0}, {8, 15, 3, 5, 3, 0}, {2, 9, 4, 3, 1, 4}});
+    one("breeze", "textures/entity/breeze/breeze.png", 8, 8, 8, 8, 32, 32);
+    // Kupfergolem: Kopf mit Nase, obendrauf der Blitzableiter (Stab und Knauf)
+    many("copper_golem", "textures/entity/copper_golem/copper_golem.png", 64, 64, 8, 5, new float[][] {{10, 10, 8, 5, 0, 0}});
+    one("creaking", "textures/entity/creaking/creaking.png", 6, 6, 6, 10, 64, 64);
+    many("frog", "textures/entity/frog/temperate_frog.png", 48, 48, 7, 5, new float[][] {{12, 10, 7, 3, 0, 2}, {3, 3, 3, 2, 0, 0}, {3, 8, 3, 2, 4, 0}});
+    one("happy_ghast", "textures/entity/ghast/happy_ghast.png", 16, 16, 16, 16, 64, 64);
+    one("nautilus", "textures/entity/nautilus/nautilus.png", 16, 16, 14, 10, 128, 128);
+    one("zombie_nautilus", "textures/entity/nautilus/zombie_nautilus.png", 16, 16, 14, 10, 128, 128);
+    one("sniffer", "textures/entity/sniffer/sniffer.png", 19, 26, 13, 18, 192, 192);
   }
 
   private MobFaces() {
