@@ -281,6 +281,33 @@
           "name": "Show in the ring",
           "description": "Shows \"Blockmatch\" in the Freundeskreis ring, so you can see how well you fit with a player."
         }
+      },
+      "loot": {
+        "name": "Daily chest",
+        "description": "Once a day you open a chest with 1 to 10 Holy Coins. Use them to unlock woods for the backgrounds and to buy in the sticker shop. Holy Coins exist only in this addon, they are free and cannot be bought.",
+        "daily": {
+          "name": "Open when joining a server",
+          "description": "Opens the chest by itself once a day, shortly after you joined a server."
+        },
+        "open": {
+          "name": "Open chest",
+          "description": "Opens the daily chest.",
+          "text": "Open"
+        }
+      },
+      "shop": {
+        "name": "Sticker shop",
+        "description": "Every day four random mob stickers are on offer, the same for all players. You pay with Holy Coins from the daily chest, bought stickers go into your sticker book.",
+        "open": {
+          "name": "Open shop",
+          "description": "Opens today's offer.",
+          "text": "Open"
+        },
+        "gallery": {
+          "name": "View all stickers",
+          "description": "Shows all mob stickers to browse. Right-click switches to the holo variant.",
+          "text": "View"
+        }
       }
     },
     "ui": {
@@ -466,7 +493,9 @@
         "diary": "Diary",
         "diaryCover": "Diary cover",
         "mixtape": "Mixtapes",
-        "match": "Blockmatch"
+        "match": "Blockmatch",
+        "loot": "Daily chest",
+        "shop": "Sticker shop"
       },
       "vanish": {
         "wheel": {
@@ -609,7 +638,11 @@
         "mangrove": "Mangrove",
         "cherry": "Cherry",
         "titleMixtape": "Mixtapes background",
-        "titleMatch": "Blockmatch background"
+        "titleMatch": "Blockmatch background",
+        "bamboo": "Bamboo",
+        "crimson": "Crimson",
+        "warped": "Warped",
+        "pale_oak": "Pale oak"
       },
       "match": {
         "title": "Blockmatch",
@@ -795,7 +828,22 @@
         "doneText": "Feel free to look through your answers once more. As long as you have not submitted, you can change everything and reset everything once a week. Only after submitting do you take part in matching.",
         "send": "Submit",
         "sendSure": "Really submit?",
-        "sendWarn": "Careful: after submitting you can never change or delete your answers again. Click the button once more if you are sure."
+        "sendWarn": "Careful: after submitting you can never change or delete your answers again. Click the button once more if you are sure.",
+        "theme5": "Peach",
+        "theme6": "Lemon"
+      },
+      "loot": {
+        "title": "Daily chest",
+        "name": "Holy Coins",
+        "tomorrow": "The next chest is waiting tomorrow.",
+        "shop": "Sticker shop",
+        "tier0": "Mob sticker · common",
+        "tier1": "Mob sticker · better",
+        "tier2": "Mob sticker · very good",
+        "tier3": "Mob sticker · extremely rare",
+        "holo": "Holo sticker",
+        "next": "New stickers in %s h",
+        "gallery": "All stickers"
       }
     },
     "hudWidget": {

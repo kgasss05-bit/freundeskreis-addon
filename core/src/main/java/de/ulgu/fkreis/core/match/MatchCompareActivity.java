@@ -20,7 +20,7 @@ import net.labymod.api.client.render.matrix.Stack;
 @AutoActivity
 public class MatchCompareActivity extends FkActivity {
 
-  private static final long SUSPENSE_MS = 2600L, TIMEOUT_MS = 7000L, COUNT_MS = 1400L;
+  private static final long SUSPENSE_MS = 2600L, TIMEOUT_MS = 7000L;
 
   private final UUID other;
   private final String name;
@@ -69,8 +69,7 @@ public class MatchCompareActivity extends FkActivity {
       this.revealAt = System.currentTimeMillis();
     }
     boolean failed = !this.ready || (pct < 0 && age > TIMEOUT_MS);
-    // die zwei Koepfe: erst pendeln sie aufeinander zu und wieder weg, beim Ergebnis ruecken sie zusammen
-    float swing = this.revealAt > 0 ? 66 : failed ? 104 : 88 + (float) Math.sin(age / 230.0) * 22;
+    float swing = 88;
     float hs = 48, hy = cy - 52;
     G.rect(s, cx - swing - hs / 2F - 2, hy - 2, hs + 4, hs + 4, c[3]);
     G.rect(s, cx + swing - hs / 2F - 2, hy - 2, hs + 4, hs + 4, c[3]);
@@ -79,33 +78,30 @@ public class MatchCompareActivity extends FkActivity {
     G.centered(s, G.fit(Laby.labyAPI().getName(), 110, 0.9F), cx - 100, hy + hs + 6, c[5], 0.9F, false);
     G.centered(s, G.fit(this.name, 110, 0.9F), cx + 100, hy + hs + 6, c[5], 0.9F, false);
 
-    // Herz in der Mitte: fuellt sich von unten bis zur Prozentzahl, die Zahl steht darin
+    // Herz in der Mitte: steht still und zeigt am Ende nur die Prozentzahl
     float fill = 0;
-    String inside;
+    String inside = "";
     String line;
+    boolean loading = false;
     if (!this.ready) {
       inside = "?";
       line = L.t("match.cmpFirst");
     } else if (this.revealAt > 0) {
-      float t = Math.min(1F, (System.currentTimeMillis() - this.revealAt) / (float) COUNT_MS);
-      float eased = 1F - (1F - t) * (1F - t);
-      fill = pct / 100F * eased;
-      inside = Math.round(pct * eased) + "%";
-      if (t >= 1F && !this.dinged) {
+      fill = pct / 100F;
+      inside = pct + "%";
+      if (!this.dinged) {
         this.dinged = true;
         G.sound("entity.player.levelup", pct >= 75 ? 1.6F : 1.1F);
       }
-      line = t < 1F ? "" : L.t(pct >= 80 ? "match.cmpHigh" : pct >= 60 ? "match.cmpMid" : "match.cmpLow");
+      line = L.t(pct >= 80 ? "match.cmpHigh" : pct >= 60 ? "match.cmpMid" : "match.cmpLow");
     } else if (failed) {
       inside = "?";
       line = L.t("match.cmpNone", this.name);
     } else {
-      fill = 0.5F + 0.5F * (float) Math.sin(age / 260.0); // waehrend des Wartens schwappt es auf und ab
-      inside = "";
+      loading = true;
       line = L.t("match.cmpWait");
     }
-    float beat = this.revealAt > 0 || failed ? 1F : 1F + 0.06F * (float) Math.abs(Math.sin(age / 230.0));
-    this.heart(s, cx, hy + hs / 2F, 4.2F * beat, fill, c, light);
+    this.heart(s, cx, hy + hs / 2F, 4.2F, fill, c, light);
     if (!inside.isEmpty()) {
       G.centered(s, inside, cx, hy + hs / 2F - 9, 0xFFFFFFFF, 1.5F, true);
     }
@@ -113,6 +109,29 @@ public class MatchCompareActivity extends FkActivity {
     for (String l : G.wrap(line, cw - 30, 1F)) {
       G.centered(s, l, cx, y, c[5], 1F, false);
       y += 11;
+    }
+    if (loading) { // Ladebalken aus Bloecken, ueber den ein Lichtstreifen laeuft
+      float done = Math.min(pct >= 0 ? 1F : 0.92F, age / (float) SUSPENSE_MS);
+      int blocks = 20;
+      float bw = 9, gap = 2, total = blocks * bw + (blocks - 1) * gap, bx = cx - total / 2F, by = y + 6, bh = 10;
+      G.rect(s, bx - 3, by - 3, total + 6, bh + 6, light ? c[4] : 0xFF000000);
+      G.rect(s, bx - 2, by - 2, total + 4, bh + 4, light ? 0xFFFFFFFF : 0xFF14161C);
+      float sweep = (age % 900) / 900F * (blocks + 4) - 2;
+      for (int i = 0; i < blocks; i++) {
+        float x = bx + i * (bw + gap);
+        boolean on = i < Math.round(done * blocks);
+        int col = on ? c[3] : light ? G.shade(c[7], 0.92F) : 0xFF2A2E38;
+        if (on) {
+          float glow = Math.max(0F, 1F - Math.abs(i - sweep) / 2F);
+          col = G.mix(col, 0xFFFFFFFF, 0.55F * glow);
+        }
+        float pop = on && i == Math.round(done * blocks) - 1 ? 1.5F : 0F; // der neueste Block ragt kurz heraus
+        G.rect(s, x, by - pop, bw, bh + pop * 2, col);
+        if (on) {
+          G.rect(s, x, by + bh - 2 + pop, bw, 2, c[4]);
+        }
+      }
+      G.centered(s, Math.round(done * 100) + " %", cx, by + bh + 7, c[6], 0.85F, false);
     }
     float[] b = this.btn();
     boolean over = G.in(mx, my, b[0], b[1], b[2], b[3]);

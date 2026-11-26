@@ -4,6 +4,8 @@ import de.ulgu.fkreis.core.FkreisAddon;
 import de.ulgu.fkreis.core.L;
 import de.ulgu.fkreis.core.data.Sticker;
 import de.ulgu.fkreis.core.gfx.G;
+import de.ulgu.fkreis.core.loot.MobStickers;
+import de.ulgu.fkreis.core.loot.StickerShopActivity;
 import de.ulgu.fkreis.core.net.StickerShare;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,8 +48,23 @@ public class StickerBookActivity extends FkActivity {
     G.sound("item.book.page_turn", 0.9F);
   }
 
+  /** Erst die gekauften Mob-Sticker (uuid = "mob:<id>"), dann die geschenkten Spieler-Sticker. */
   private List<Sticker> stickers() {
-    return this.remote != null ? this.remote.stickers : FkreisAddon.get().store().stickers;
+    List<String> mobs = this.remote != null ? this.remote.mobs : MobStickers.owned();
+    List<Sticker> players = this.remote != null ? this.remote.stickers : FkreisAddon.get().store().stickers;
+    if (mobs.isEmpty()) {
+      return players;
+    }
+    List<Sticker> all = new java.util.ArrayList<>(mobs.size() + players.size());
+    for (String id : mobs) {
+      all.add(new Sticker(MobStickers.PREFIX + id, MobStickers.name(id), 0));
+    }
+    all.addAll(players);
+    return all;
+  }
+
+  private float[] shopButton() {
+    return new float[] {this.book.x + this.book.w - 96, this.book.y + this.book.h + 2, 96, 15};
   }
 
   private int spreads() {
@@ -112,7 +129,12 @@ public class StickerBookActivity extends FkActivity {
       Sticker st = list.get(idx);
       boolean over = G.in(mx, my, r[0], r[1], r[2], r[3]);
       this.hover[local] = G.lerp(this.hover[local], over ? 1F : 0F, 0.25F);
-      if (over) {
+      if (over && st.uuid.startsWith(MobStickers.PREFIX)) {
+        String key = st.uuid.substring(MobStickers.PREFIX.length());
+        tooltip = MobStickers.holo(key) ? L.t("loot.holo") : L.t("loot.tier" + Math.max(0, MobStickers.tierOf(key)));
+        tipX = mx;
+        tipY = my;
+      } else if (over) {
         tooltip = L.t("sticker.date", new SimpleDateFormat("dd.MM.yyyy").format(new Date(st.time)));
         tipX = mx;
         tipY = my;
@@ -140,6 +162,14 @@ public class StickerBookActivity extends FkActivity {
       G.centered(s, "›", cx + 30, by - 3, G.in(mx, my, cx + 22, by - 4, 16, 14) ? 0xFFFFE08A : 0xFFE8DCC0, 1.6F, true);
     }
 
+    if (this.remote == null) { // eigener Laden fuer Mob-Sticker
+      float[] b = this.shopButton();
+      boolean over = G.in(mx, my, b[0], b[1], b[2], b[3]);
+      G.rect(s, b[0], b[1], b[2], b[3], over ? 0xFFFFE08A : 0xFFF2C94C);
+      G.rect(s, b[0], b[1] + b[3] - 2, b[2], 2, 0xFF8A6A10);
+      G.centered(s, G.fit(L.t("loot.shop"), b[2] - 6, 0.85F), b[0] + b[2] / 2F, b[1] + 4, 0xFF1A1400, 0.85F, false);
+    }
+
     if (tooltip != null) {
       float tw = G.width(tooltip) + 8;
       G.rect(s, tipX + 8, tipY - 14, tw, 13, 0xE0101420);
@@ -148,6 +178,10 @@ public class StickerBookActivity extends FkActivity {
   }
 
   private void sticker(Stack s, Sticker st, float[] r, float hover, int local) {
+    if (st.uuid.startsWith(MobStickers.PREFIX)) {
+      MobStickers.draw(s, st.uuid.substring(MobStickers.PREFIX.length()), r[0], r[1], r[2], r[3], hover, false);
+      return;
+    }
     // ohne Drehen/Zoomen (sonst verschieben sich Flaechen und Text) – Hover hebt den Sticker leicht an
     float lx = r[0], ly = r[1] - 2F * hover;
     float cx = r[0] + r[2] / 2F;
@@ -195,6 +229,11 @@ public class StickerBookActivity extends FkActivity {
   protected boolean onClick(float mx, float my, boolean left) {
     float cx = this.book.x + this.book.w / 2F;
     float by = this.book.y + this.book.h + 4;
+    float[] sb = this.shopButton();
+    if (this.remote == null && G.in(mx, my, sb[0], sb[1], sb[2], sb[3])) {
+      Screens.now(new StickerShopActivity());
+      return true;
+    }
     if (G.in(mx, my, cx - 38, by - 4, 16, 14)) {
       this.flipTo(-1);
       return true;

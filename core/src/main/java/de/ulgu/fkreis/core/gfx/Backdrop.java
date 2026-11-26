@@ -5,8 +5,8 @@ import net.labymod.api.client.render.matrix.Stack;
 /** Hintergruende fuer Bildschirme: die Holzarten aus dem Spiel als Bretterwand. */
 public final class Backdrop {
 
-  public static final String[] IDS = {"oak", "spruce", "birch", "dark_oak", "jungle", "acacia", "mangrove", "cherry"};
-  private static final int[] WOOD = {0xA8834F, 0x6E4E2C, 0xC9B37A, 0x3F2A16, 0xA07350, 0xA85A32, 0x6F2A2D, 0xDFA9A4};
+  public static final String[] IDS = {"oak", "birch", "spruce", "dark_oak", "jungle", "acacia", "mangrove", "cherry", "bamboo", "crimson", "warped", "pale_oak"};
+  private static final int[] WOOD = {0xA8834F, 0xC9B37A, 0x6E4E2C, 0x3F2A16, 0xA07350, 0xA85A32, 0x6F2A2D, 0xDFA9A4, 0xC8B455, 0x7E3A56, 0x2B6963, 0xE3DAD8};
 
   private Backdrop() {
   }

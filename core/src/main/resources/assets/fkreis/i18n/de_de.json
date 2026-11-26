@@ -281,6 +281,33 @@
           "name": "Im Kreis anzeigen",
           "description": "Zeigt „Blockmatch“ im Freundeskreis-Kreis: So siehst du, wie gut du mit einem Spieler zusammenpasst."
         }
+      },
+      "loot": {
+        "name": "Tägliche Truhe",
+        "description": "Einmal am Tag öffnest du eine Truhe mit 1 bis 10 Holy-Coins. Damit schaltest du Hölzer für die Hintergründe frei und kaufst im Sticker-Laden ein. Holy-Coins gibt es nur in diesem Addon, sie kosten nichts und lassen sich nicht kaufen.",
+        "daily": {
+          "name": "Beim Server-Beitritt öffnen",
+          "description": "Öffnet die Truhe einmal am Tag von selbst, kurz nachdem du einen Server betreten hast."
+        },
+        "open": {
+          "name": "Truhe öffnen",
+          "description": "Öffnet die tägliche Truhe.",
+          "text": "Öffnen"
+        }
+      },
+      "shop": {
+        "name": "Sticker-Laden",
+        "description": "Jeden Tag stehen vier zufällige Mob-Sticker im Angebot, für alle Spieler dieselben. Bezahlt wird mit Holy-Coins aus der täglichen Truhe, gekaufte Sticker landen in deinem Sammelbuch.",
+        "open": {
+          "name": "Laden öffnen",
+          "description": "Öffnet das Angebot von heute.",
+          "text": "Öffnen"
+        },
+        "gallery": {
+          "name": "Alle Sticker ansehen",
+          "description": "Zeigt alle Mob-Sticker zum Durchblättern. Rechtsklick schaltet auf die Holo-Variante um.",
+          "text": "Ansehen"
+        }
       }
     },
     "ui": {
@@ -466,7 +493,9 @@
         "diary": "Tagebuch",
         "diaryCover": "Tagebuch-Einband",
         "mixtape": "Mixtapes",
-        "match": "Blockmatch"
+        "match": "Blockmatch",
+        "loot": "Tägliche Truhe",
+        "shop": "Sticker-Laden"
       },
       "vanish": {
         "wheel": {
@@ -609,7 +638,11 @@
         "mangrove": "Mangrove",
         "cherry": "Kirsche",
         "titleMixtape": "Hintergrund der Mixtapes",
-        "titleMatch": "Hintergrund von Blockmatch"
+        "titleMatch": "Hintergrund von Blockmatch",
+        "bamboo": "Bambus",
+        "crimson": "Karmesin",
+        "warped": "Wirrholz",
+        "pale_oak": "Blasseiche"
       },
       "match": {
         "title": "Blockmatch",
@@ -795,7 +828,22 @@
         "doneText": "Schau deine Antworten ruhig noch einmal durch. Solange du nicht abgesendet hast, kannst du alles ändern und einmal pro Woche alles zurücksetzen. Erst nach dem Absenden nimmst du am Matching teil.",
         "send": "Absenden",
         "sendSure": "Wirklich absenden?",
-        "sendWarn": "Achtung: Nach dem Absenden kannst du deine Antworten nie wieder ändern oder löschen. Klick noch einmal auf den Knopf, wenn du sicher bist."
+        "sendWarn": "Achtung: Nach dem Absenden kannst du deine Antworten nie wieder ändern oder löschen. Klick noch einmal auf den Knopf, wenn du sicher bist.",
+        "theme5": "Pfirsich",
+        "theme6": "Zitrone"
+      },
+      "loot": {
+        "title": "Tägliche Truhe",
+        "name": "Holy-Coins",
+        "tomorrow": "Morgen gibt es die nächste Truhe.",
+        "shop": "Sticker-Laden",
+        "tier0": "Mob-Sticker · einfach",
+        "tier1": "Mob-Sticker · besser",
+        "tier2": "Mob-Sticker · extrem gut",
+        "tier3": "Mob-Sticker · extrem selten",
+        "holo": "Holo-Sticker",
+        "next": "Neue Sticker in %s Std.",
+        "gallery": "Alle Sticker"
       }
     },
     "hudWidget": {

@@ -32,17 +32,23 @@ public class FkreisConfig extends AddonConfig {
   @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final AlbumSettings album = new AlbumSettings();
 
-  @IntroducedIn(namespace = "fkreis", value = "2.1.0")
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final VanishSettings vanish = new VanishSettings();
 
-  @IntroducedIn(namespace = "fkreis", value = "2.2.0")
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final DiarySettings diary = new DiarySettings();
 
-  @IntroducedIn(namespace = "fkreis", value = "2.3.0")
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final MixtapeSettings mixtape = new MixtapeSettings();
 
-  @IntroducedIn(namespace = "fkreis", value = "2.3.0")
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
   private final MatchSettings match = new MatchSettings();
+
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
+  private final LootSettings loot = new LootSettings();
+
+  @IntroducedIn(namespace = "fkreis", value = "2.0.0")
+  private final ShopSettings shop = new ShopSettings();
 
   /** Ganz oben: Knopf "HUD-Widget einstellen". */
   @MethodOrder(after = "enabled")
@@ -55,6 +61,14 @@ public class FkreisConfig extends AddonConfig {
   @Override
   public ConfigProperty<Boolean> enabled() {
     return this.enabled;
+  }
+
+  public ShopSettings shop() {
+    return this.shop;
+  }
+
+  public LootSettings loot() {
+    return this.loot;
   }
 
   public ProfileSettings profile() {

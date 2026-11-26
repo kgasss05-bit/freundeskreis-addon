@@ -4,6 +4,7 @@ import de.ulgu.fkreis.core.FkreisAddon;
 import de.ulgu.fkreis.core.L;
 import de.ulgu.fkreis.core.gfx.Backdrop;
 import de.ulgu.fkreis.core.gfx.G;
+import de.ulgu.fkreis.core.loot.Loot;
 import de.ulgu.fkreis.core.net.MatchShare;
 import de.ulgu.fkreis.core.ui.FkActivity;
 import de.ulgu.fkreis.core.ui.Screens;
@@ -21,13 +22,15 @@ import net.labymod.api.client.resources.ResourceLocation;
 public class MatchActivity extends FkActivity {
 
   /** Farbwelten: Hintergrund oben/unten, Karte, Akzent, dunkler Akzent, Text, blasser Text, Knopf, Knopf unter der Maus. */
-  private static final String[] THEMES = {"pink", "blue", "mint", "lilac", "classic"};
+  private static final String[] THEMES = {"pink", "blue", "mint", "lilac", "classic", "peach", "lemon"};
   private static final int[][] COLORS = {
       {0xFFFFD6E7, 0xFFFFBFD8, 0xFFFFF4F8, 0xFFE8528F, 0xFFB03468, 0xFF4A2038, 0xFF9A6F84, 0xFFFFD9E8, 0xFFFFC2DA},
       {0xFFD6ECFF, 0xFFBBDDFF, 0xFFF4FAFF, 0xFF3A8FD8, 0xFF215A94, 0xFF1C3550, 0xFF6F8AA6, 0xFFD9ECFF, 0xFFBFE0FF},
       {0xFFD9F5E6, 0xFFBDE8D2, 0xFFF4FFF9, 0xFF2E9A6B, 0xFF1F6F4C, 0xFF173B2C, 0xFF6E9684, 0xFFD4F2E2, 0xFFBDE8D2},
       {0xFFE9DEFF, 0xFFD3C2FF, 0xFFF9F5FF, 0xFF8E5BD0, 0xFF5F3A94, 0xFF2E1F4A, 0xFF8A7AA6, 0xFFE4D9FF, 0xFFD3C2FF},
-      {0, 0, 0xF21C1F28, 0xFFF2C94C, 0xFF8A6A10, 0xFFFFFFFF, 0xFF9AA3B5, 0xFF2F3440, 0xFF4A4F5C}};
+      {0, 0, 0xF21C1F28, 0xFFF2C94C, 0xFF8A6A10, 0xFFFFFFFF, 0xFF9AA3B5, 0xFF2F3440, 0xFF4A4F5C},
+      {0xFFFFE3D1, 0xFFFFCFB3, 0xFFFFF7F1, 0xFFE8793F, 0xFFA9501F, 0xFF4A2A18, 0xFF9A7A68, 0xFFFFE2CF, 0xFFFFCFB3},
+      {0xFFFFF6C9, 0xFFFFEC9E, 0xFFFFFDF0, 0xFFD9A400, 0xFF8F6C00, 0xFF403300, 0xFF8F8660, 0xFFFFF3BF, 0xFFFFEC9E}};
 
   private final MatchData data = MatchData.get();
   private boolean choosing;
@@ -51,6 +54,9 @@ public class MatchActivity extends FkActivity {
 
   public MatchActivity() {
     this.choosing = this.data.theme.isEmpty();
+    if (!this.data.theme.isEmpty()) {
+      Loot.get().grant("theme:" + this.data.theme); // schon gewaehlte Farbe bleibt frei
+    }
     int open = this.data.firstOpen();
     this.quiz = !this.data.submitted && open >= 0;
     this.at = Math.max(0, open);
@@ -84,7 +90,7 @@ public class MatchActivity extends FkActivity {
   }
 
   private float[] swatch(int i) {
-    float sw = 62, gap = 10, total = THEMES.length * sw + (THEMES.length - 1) * gap;
+    float gap = 8, sw = Math.min(62, (this.cw - 32 - (THEMES.length - 1) * gap) / THEMES.length), total = THEMES.length * sw + (THEMES.length - 1) * gap;
     return new float[] {this.cx + (this.cw - total) / 2F + i * (sw + gap), this.cy + 84, sw, 62};
   }
 
@@ -200,6 +206,9 @@ public class MatchActivity extends FkActivity {
         G.rect(s, r[0] + 8, r[1] + 28, r[2] - 16, 9, COLORS[i][3]);
         G.rect(s, r[0] + 8, r[1] + 41, r[2] - 16, 9, COLORS[i][7]);
         G.outline(s, r[0], r[1], r[2], r[3], sel || over ? 2 : 1, sel ? this.c[3] : over ? this.c[5] : this.c[6]);
+        if (!Loot.get().owns("theme:" + THEMES[i])) {
+          Loot.locked(s, r[0], r[1], r[2], r[3], Loot.price("theme:" + THEMES[i]));
+        }
         G.centered(s, L.t("match.theme" + i), r[0] + r[2] / 2F, r[1] + r[3] + 5, this.c[5], 0.85F, false);
       }
       this.button(s, this.foot(1), L.t("match.themeDone"), mx, my, true, false);
@@ -329,6 +338,14 @@ public class MatchActivity extends FkActivity {
       for (int i = 0; i < THEMES.length; i++) {
         float[] r = this.swatch(i);
         if (G.in(mx, my, r[0], r[1], r[2], r[3])) {
+          String id = "theme:" + THEMES[i];
+          if (!Loot.get().owns(id)) {
+            if (!Loot.get().buy(id)) { // zu wenig Muenzen
+              G.sound("block.note_block.bass", 0.7F);
+              return true;
+            }
+            G.sound("entity.experience_orb.pickup", 1.2F);
+          }
           this.data.theme = THEMES[i];
           this.data.save();
           G.click();

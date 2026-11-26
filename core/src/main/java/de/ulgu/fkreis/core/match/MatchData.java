@@ -41,7 +41,7 @@ public class MatchData {
 
   /** Antwort je Platz: -1 offen, sonst 0..4 (Aussage) oder 0..2 (Minecraft-Frage). */
   public int[] answers = blank();
-  public String background = "dark_oak";
+  public String background = "oak";
   /** Farbwelt des Menues: "" (noch nicht gewaehlt), pink, blue, mint, lilac oder classic. */
   public String theme = "";
   /** Wann die Antworten zuletzt zurueckgesetzt wurden (Millisekunden); das geht nur einmal pro Woche und nur vor dem Absenden. */
@@ -85,7 +85,7 @@ public class MatchData {
               d.answers = blank();
             }
             if (d.background == null) {
-              d.background = "dark_oak";
+              d.background = "oak";
             }
             if (d.theme == null) {
               d.theme = "";

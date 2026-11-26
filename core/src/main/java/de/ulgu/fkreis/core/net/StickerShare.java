@@ -27,6 +27,8 @@ public final class StickerShare {
   public static final class Remote {
     public volatile State state = State.LOADING;
     public volatile List<Sticker> stickers = new ArrayList<>();
+    /** Gekaufte Mob-Sticker der Person (nur die Mob-IDs). */
+    public volatile List<String> mobs = new ArrayList<>();
     final long askedAt = System.currentTimeMillis();
   }
 
@@ -82,7 +84,9 @@ public final class StickerShare {
       return;
     }
     try {
-      r.stickers = unpack(payload);
+      List<String> mobs = new ArrayList<>();
+      r.stickers = unpack(payload, mobs);
+      r.mobs = mobs;
       r.state = State.LOADED;
     } catch (IOException | RuntimeException e) {
       r.state = State.NO_REPLY;
@@ -99,6 +103,8 @@ public final class StickerShare {
   /** Die neuesten {@code count} Sticker, je Zeile "uuid|zeit|name". */
   static String pack(List<Sticker> all, int count) {
     StringBuilder sb = new StringBuilder();
+    // erste Zeile: gekaufte Mob-Sticker (aeltere Versionen ueberspringen diese Zeile einfach)
+    sb.append('#').append(String.join(",", de.ulgu.fkreis.core.loot.MobStickers.owned())).append('\n');
     for (int i = Math.max(0, all.size() - count); i < all.size(); i++) {
       Sticker s = all.get(i);
       if (s == null || s.uuid == null) {
@@ -118,7 +124,7 @@ public final class StickerShare {
     }
   }
 
-  static List<Sticker> unpack(String payload) throws IOException {
+  static List<Sticker> unpack(String payload, List<String> mobs) throws IOException {
     List<Sticker> out = new ArrayList<>();
     if (payload == null || payload.isEmpty()) {
       return out;
@@ -136,6 +142,14 @@ public final class StickerShare {
       }
     }
     for (String line : new String(bytes.toByteArray(), StandardCharsets.UTF_8).split("\n")) {
+      if (line.startsWith("#")) {
+        for (String id : line.substring(1).split(",")) {
+          if (de.ulgu.fkreis.core.loot.MobStickers.tierOf(id) >= 0 && !mobs.contains(id)) {
+            mobs.add(id);
+          }
+        }
+        continue;
+      }
       String[] p = line.split("\\|", 3);
       if (p.length < 3 || p[0].length() != 32 || out.size() >= MAX_STICKERS) {
         continue;

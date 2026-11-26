@@ -1,6 +1,7 @@
 package de.ulgu.fkreis.core.gfx;
 
 import de.ulgu.fkreis.core.L;
+import de.ulgu.fkreis.core.loot.Loot;
 import de.ulgu.fkreis.core.mixtape.Tapes;
 import de.ulgu.fkreis.core.ui.FkActivity;
 import de.ulgu.fkreis.core.ui.Screens;
@@ -17,6 +18,7 @@ public class BackdropPickerActivity extends FkActivity {
 
   public BackdropPickerActivity(boolean mixtape) {
     this.mixtape = mixtape;
+    Loot.get().grant("wood:" + this.current()); // schon benutztes Holz bleibt frei
     G.click();
   }
 
@@ -26,7 +28,7 @@ public class BackdropPickerActivity extends FkActivity {
 
   private float[] cell(int i) {
     float cw = 104, ch = 70;
-    float x0 = this.x + (this.w - 4 * cw) / 2F, y0 = this.y + Math.max(44, (this.h - 2 * ch) / 2F);
+    float x0 = this.x + (this.w - 4 * cw) / 2F, y0 = this.y + Math.max(40, (this.h - ((Backdrop.IDS.length + 3) / 4) * ch) / 2F + 10);
     return new float[] {x0 + (i % 4) * cw + 4, y0 + (i / 4) * ch, 96, 52};
   }
 
@@ -39,8 +41,12 @@ public class BackdropPickerActivity extends FkActivity {
       boolean sel = Backdrop.IDS[i].equals(this.current()), over = G.in(mx, my, c[0], c[1], c[2], c[3]);
       Backdrop.swatch(s, Backdrop.IDS[i], c[0], c[1], c[2], c[3]);
       G.outline(s, c[0] - 1, c[1] - 1, c[2] + 2, c[3] + 2, sel ? 2 : 1, sel ? 0xFFF2C94C : over ? 0xFFFFFFFF : 0xFF000000);
+      if (!Loot.get().owns("wood:" + Backdrop.IDS[i])) {
+        Loot.locked(s, c[0], c[1], c[2], c[3], Loot.price("wood:" + Backdrop.IDS[i]));
+      }
       G.centered(s, L.t("backdrop." + Backdrop.IDS[i]), c[0] + c[2] / 2F, c[1] + c[3] + 4, sel ? 0xFFF2C94C : 0xFFFFFFFF, 0.9F, true);
     }
+    Loot.balance(s, this.x + this.w - 10, this.y + 34);
   }
 
   @Override
@@ -52,6 +58,14 @@ public class BackdropPickerActivity extends FkActivity {
     for (int i = 0; i < Backdrop.IDS.length; i++) {
       float[] c = this.cell(i);
       if (G.in(mx, my, c[0], c[1], c[2], c[3])) {
+        String id = "wood:" + Backdrop.IDS[i];
+        if (!Loot.get().owns(id)) {
+          if (!Loot.get().buy(id)) { // zu wenig Muenzen
+            G.sound("block.note_block.bass", 0.7F);
+            return true;
+          }
+          G.sound("entity.experience_orb.pickup", 1.2F);
+        }
         if (this.mixtape) {
           Tapes.get().background = Backdrop.IDS[i];
           Tapes.get().save();
