@@ -49,7 +49,7 @@ public final class Grotto {
   /** Der Hoehleneingang im Huegel: {x, y, w, h}. */
   private static float[] entrance(float x, float y, float w, float h) {
     float t = tileSize(w, h), floor = y + h - t;
-    return new float[] {x + w / 2F - 2.5F * t, floor - 4F * t, 5 * t, 4F * t};
+    return new float[] {x + w / 2F - t, floor - 2.5F * t, 2 * t, 2.5F * t};
   }
 
   /** Grosse Bloecke: man steht dicht vor der Felswand. */
@@ -123,11 +123,10 @@ public final class Grotto {
       G.rect(s, x, y, w, (h - t) * (0.30F - i * 0.045F), 0x1A000008);
     }
 
-    // Eingang: das Loch liegt tief im Fels. Vier Schichten Stein treten Stufe fuer Stufe zurueck,
-    // jede aus kleineren Bloecken und dunkler als die davor; ganz hinten das kleine dunkle Loch.
+    // Eingang: kleines dunkles Loch in der Mitte, eingefasst von einer Schicht Stein.
     float flick = 0.7F + 0.3F * (float) Math.sin(now / 170.0);
     boolean over = this.enteredAt == 0 && G.in(mx, my, e[0] - 6, e[1] - 6, e[2] + 12, e[3] + 6);
-    String[] ring = {"stone", "cobblestone", "andesite", "deepslate"};
+    String[] ring = {"cobblestone"}; // genau eine Schicht Stein um das Loch
     float lx = e[0], ly = e[1], lw = e[2], lh = e[3], u = t / 2F;
     for (int i = 0; i < ring.length; i++) {
       int nx = Math.round(lw / u), ny = Math.round(lh / u);
@@ -154,8 +153,8 @@ public final class Grotto {
       G.rect(s, lx + (lw - gw) / 2F, ly + lh - gh, gw, gh, G.alpha(i == 1 ? 0xFFB58CFF : 0xFFFFA84A, (over ? 0.20F : 0.11F) * flick));
     }
     tile(s, "cobweb", e[0] + u, e[1] + u, u * 1.4F);
-    for (int i = 0; i < 4; i++) { // Leuchtbeeren haengen ueber dem Eingang
-      tile(s, "cave_vines_lit", e[0] + t * 0.5F + i * t * 0.8F, e[1] - t * 0.15F, t * 0.7F);
+    for (int i = 0; i < 2; i++) { // Leuchtbeeren haengen ueber dem Eingang
+      tile(s, "cave_vines_lit", e[0] + t * 0.25F + i * t * 0.8F, e[1] - t * 0.15F, t * 0.7F);
     }
     for (int k = 0; k < 2; k++) { // Fackeln links und rechts mit Lichtschein auf dem Stein
       float tx = k == 0 ? e[0] - t * 1.15F : e[0] + e[2] + t * 0.25F, ty = e[1] + t * 1.3F;
