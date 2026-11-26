@@ -14,6 +14,8 @@ public final class Grotto {
 
   private static final java.util.Map<String, Icon> BLOCKS = new java.util.HashMap<>();
   private static final long ZOOM_MS = 750L, FADE_MS = 450L;
+  /** Umriss des Hoehlenlochs, Zeile fuer Zeile von oben: {Einzug, Breite} in Drittel-Bloecken. */
+  private static final int[][] HOLE = {{3, 3}, {2, 5}, {1, 7}, {0, 8}, {0, 9}, {1, 8}, {0, 9}};
   private static final String[] FLOWERS = {"poppy", "dandelion", "cornflower", "allium", "azure_bluet", "oxeye_daisy"};
 
   /** Hoehe des Bodens in der Grotte. */
@@ -49,7 +51,7 @@ public final class Grotto {
   /** Der Hoehleneingang im Huegel: {x, y, w, h}. */
   private static float[] entrance(float x, float y, float w, float h) {
     float t = tileSize(w, h), floor = y + h - t;
-    return new float[] {x + w / 2F - t, floor - 2.5F * t, 2 * t, 2.5F * t};
+    return new float[] {x + w / 2F - 1.5F * t, floor - 7F * t / 3F, 3 * t, 7F * t / 3F};
   }
 
   /** Grosse Bloecke: man steht dicht vor der Felswand. */
@@ -122,64 +124,31 @@ public final class Grotto {
       G.rect(s, x, y, w, (h - t) * (0.30F - i * 0.045F), 0x1A000008);
     }
 
-    // Eingang: kleines dunkles Loch in der Mitte, eingefasst von einer Schicht Stein.
+    // Eingang: ein ganz normales Hoehlenloch, unregelmaessig aus dem Fels gebrochen (kein Rahmen, kein Schild, keine Fackeln).
     float flick = 0.7F + 0.3F * (float) Math.sin(now / 170.0);
     boolean over = this.enteredAt == 0 && G.in(mx, my, e[0] - 6, e[1] - 6, e[2] + 12, e[3] + 6);
-    String[] ring = {"cobblestone"}; // genau eine Schicht Stein um das Loch
-    float lx = e[0], ly = e[1], lw = e[2], lh = e[3], u = t / 2F;
-    for (int i = 0; i < ring.length; i++) {
-      int nx = Math.round(lw / u), ny = Math.round(lh / u);
-      for (int c = 0; c < nx; c++) {
-        for (int r = 0; r < ny; r++) {
-          if (c == 0 || c == nx - 1 || r == 0) {
-            int hsh = hash(c + i * 7, r + i * 3);
-            tile(s, ring[i], lx + c * u, ly + r * u, u);
-          }
+    float u = t / 3F;
+    for (int pass = 0; pass < 2; pass++) { // erst ein weicher Schatten um das Loch, dann das Loch selbst
+      for (int r = 0; r < HOLE.length; r++) {
+        float hx = e[0] + HOLE[r][0] * u, hy = e[1] + r * u, hw = HOLE[r][1] * u;
+        if (pass == 0) {
+          G.rect(s, hx - u * 0.5F, hy - u * 0.5F, hw + u, u * 1.5F, 0x38000000);
+        } else {
+          G.rect(s, hx, hy, hw, u + 0.5F, 0xFF05040A);
         }
       }
-      G.rect(s, lx, ly, lw, lh, G.alpha(0xFF05040A, 0.26F)); // jede Stufe liegt tiefer im Schatten
-      G.rect(s, lx, ly, lw, 2, 0x60000000); // Kante der Stufe davor wirft Schatten
-      G.rect(s, lx, ly, 2, lh, 0x50000000);
-      G.rect(s, lx + lw - 2, ly, 2, lh, 0x50000000);
-      lx += u;
-      ly += u;
-      lw -= 2 * u;
-      lh -= u;
     }
-    G.rect(s, lx, ly, lw, lh, 0xFF05040A);
-    for (int i = 0; i < 3; i++) { // warmer Schein aus der Tiefe
-      float gw = lw * (0.9F - i * 0.25F), gh = lh * (0.7F - i * 0.2F);
-      G.rect(s, lx + (lw - gw) / 2F, ly + lh - gh, gw, gh, G.alpha(i == 1 ? 0xFFB58CFF : 0xFFFFA84A, (over ? 0.20F : 0.11F) * flick));
+    float glx = e[0] + 2 * u, gw0 = 6 * u;
+    for (int i = 0; i < 3; i++) { // schwacher warmer Schein aus der Tiefe
+      float gw = gw0 * (0.9F - i * 0.25F), gh = e[3] * (0.55F - i * 0.15F);
+      G.rect(s, glx + (gw0 - gw) / 2F, e[1] + e[3] - gh, gw, gh, G.alpha(i == 1 ? 0xFFB58CFF : 0xFFFFA84A, (over ? 0.20F : 0.09F) * flick));
     }
-    tile(s, "cobweb", e[0] + u, e[1] + u, u * 1.4F);
-    for (int i = 0; i < 2; i++) { // Leuchtbeeren haengen ueber dem Eingang
-      tile(s, "cave_vines_lit", e[0] + t * 0.25F + i * t * 0.8F, e[1] - t * 0.15F, t * 0.7F);
-    }
-    for (int k = 0; k < 2; k++) { // Fackeln links und rechts mit Lichtschein auf dem Stein
-      float tx = k == 0 ? e[0] - t * 1.15F : e[0] + e[2] + t * 0.25F, ty = e[1] + t * 1.3F;
-      for (int i = 0; i < 5; i++) {
-        float gr = t * (1.7F - i * 0.3F);
-        G.rect(s, tx + t * 0.45F - gr, ty + t * 0.3F - gr, 2 * gr, 2 * gr, G.alpha(0xFFFFB45A, 0.06F * flick));
-      }
-      tile(s, "torch", tx, ty, t * 0.9F);
-    }
-    if (over) { // Eingang leuchtet auf, wenn die Maus darueber ist
+    if (over) { // das Loch leuchtet auf, wenn die Maus darueber ist
       float pulse = 0.7F + 0.3F * (float) Math.sin(now / 200.0);
-      for (int i = 0; i < 6; i++) {
-        float grow = 4 + i * 5;
-        G.rect(s, e[0] - grow, e[1] - grow, e[2] + 2 * grow, e[3] + grow, G.alpha(0xFFFFE27A, 0.06F * pulse));
+      for (int r = 0; r < HOLE.length; r++) {
+        G.rect(s, e[0] + HOLE[r][0] * u, e[1] + r * u, HOLE[r][1] * u, u + 0.5F, G.alpha(0xFFFFD27A, 0.16F * pulse));
       }
-      G.rect(s, lx, ly, lw, lh, G.alpha(0xFFFFD27A, 0.25F * pulse));
     }
-    // Schild ueber dem Eingang
-    float sc = Math.max(1.1F, t / 24F), sh = 16 * sc;
-    float sw = Math.max(70F, G.width(sign) * sc + 22), sx = x + w / 2F - sw / 2F, sy = e[1] - sh - t * 0.35F;
-    for (float xx = 0; xx < sw; xx += sh) {
-      G.icon(s, block("oak_planks"), sx + xx, sy, Math.min(sh, sw - xx), sh);
-    }
-    G.outline(s, sx, sy, sw, sh, 1, 0xFF2B1A0C);
-    G.rect(s, sx + 2, sy + sh, sw, 3, 0x50000000);
-    G.centered(s, sign, x + w / 2F, sy + sh / 2F - 4 * sc, 0xFFFFE9B0, sc, true);
     for (int i = 0; i < 10; i++) { // Gluehwuermchen vor der Wand
       float gx = x + ((i * 137 + now / (60F + i % 5 * 20)) % w), gy = floor - 20 - ((i * 53) % 110) + (float) Math.sin(now / 500.0 + i) * 6;
       G.rect(s, gx, gy, 2, 2, G.alpha(0xFFFFF7A0, 0.3F + 0.6F * (float) Math.abs(Math.sin(now / 400.0 + i * 2))));
