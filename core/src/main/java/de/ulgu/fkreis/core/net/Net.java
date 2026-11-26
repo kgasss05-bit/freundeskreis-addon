@@ -417,6 +417,10 @@ public class Net {
         this.album.onPhoto(from, payload);
         break;
       }
+      case "ALX": {
+        this.album.onPart(from, payload);
+        break;
+      }
       case "BDY": {
         store.birthdayToday.put(from.toString(), LocalDate.now().toString());
         store.names.put(from.toString(), fromName);

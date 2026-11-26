@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 public final class AlbumShare {
 
   public static final int MAX_PHOTOS = 24;
+  /** Breite der verschickten Bilder und Groesse eines Nachrichtenteils (Zeichen). */
+  private static final int THUMB_WIDTH = 400, PART = 12000, MAX_PARTS = 8;
 
   public static final class RemotePhoto {
     public final Path file;
@@ -44,6 +46,7 @@ public final class AlbumShare {
     public volatile boolean denied;
     public final long started = System.currentTimeMillis();
     public final RemotePhoto[] photos = new RemotePhoto[MAX_PHOTOS];
+    final String[][] parts = new String[MAX_PHOTOS][];
 
     public List<RemotePhoto> list() {
       List<RemotePhoto> l = new ArrayList<>();
@@ -100,7 +103,16 @@ public final class AlbumShare {
           String cap = Base64.getUrlEncoder().withoutPadding().encodeToString(
               (p.caption == null ? "" : p.caption).getBytes(StandardCharsets.UTF_8));
           String img = Base64.getUrlEncoder().withoutPadding().encodeToString(jpg);
-          this.outbox.add(new String[] {from.toString(), "ALP", i + "~" + p.frame + "~" + cap + "~" + img});
+          String body = p.frame + "~" + cap + "~" + img;
+          if (body.length() <= PART) {
+            this.outbox.add(new String[] {from.toString(), "ALP", i + "~" + body});
+          } else { // groessere Bilder in mehreren Teilen verschicken
+            int parts = (body.length() + PART - 1) / PART;
+            for (int k = 0; k < parts; k++) {
+              String piece = body.substring(k * PART, Math.min(body.length(), (k + 1) * PART));
+              this.outbox.add(new String[] {from.toString(), "ALX", i + "~" + k + "~" + parts + "~" + piece});
+            }
+          }
         } catch (Throwable t) {
           de.ulgu.fkreis.core.FkreisAddon.log().warn("Freundeskreis: " + t);
         }
@@ -113,17 +125,18 @@ public final class AlbumShare {
     if (src == null) {
       return null;
     }
-    int w = Math.min(208, src.getWidth());
+    int w = Math.min(THUMB_WIDTH, src.getWidth());
     int h = Math.max(1, Math.round(w * src.getHeight() / (float) src.getWidth()));
-    java.awt.image.BufferedImage dst = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
-    java.awt.Graphics2D g = dst.createGraphics();
-    g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    g.drawImage(src, 0, 0, w, h, null);
-    g.dispose();
+    // schrittweise halbieren, damit das verkleinerte Bild nicht pixelig wird
+    java.awt.image.BufferedImage cur = src;
+    while (cur.getWidth() / 2 >= w) {
+      cur = scaled(cur, cur.getWidth() / 2, Math.max(1, cur.getHeight() / 2));
+    }
+    java.awt.image.BufferedImage dst = scaled(cur, w, h);
     javax.imageio.ImageWriter writer = javax.imageio.ImageIO.getImageWritersByFormatName("jpg").next();
     javax.imageio.ImageWriteParam param = writer.getDefaultWriteParam();
     param.setCompressionMode(javax.imageio.ImageWriteParam.MODE_EXPLICIT);
-    param.setCompressionQuality(0.6F);
+    param.setCompressionQuality(0.72F);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (javax.imageio.stream.ImageOutputStream ios = javax.imageio.ImageIO.createImageOutputStream(out)) {
       writer.setOutput(ios);
@@ -131,6 +144,50 @@ public final class AlbumShare {
     }
     writer.dispose();
     return out.toByteArray();
+  }
+
+  private static java.awt.image.BufferedImage scaled(java.awt.image.BufferedImage src, int w, int h) {
+    java.awt.image.BufferedImage dst = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
+    java.awt.Graphics2D g = dst.createGraphics();
+    g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.drawImage(src, 0, 0, w, h, null);
+    g.dispose();
+    return dst;
+  }
+
+  /** Ein Bild, das in mehreren Teilen ankommt: sammeln und am Ende wie ein normales Foto behandeln. */
+  void onPart(UUID from, String payload) {
+    Remote r = this.remotes.get(from);
+    if (r == null || payload == null) {
+      return;
+    }
+    String[] p = payload.split("~", 4);
+    if (p.length < 4) {
+      return;
+    }
+    try {
+      int idx = Integer.parseInt(p[0]), k = Integer.parseInt(p[1]), parts = Integer.parseInt(p[2]);
+      if (idx < 0 || idx >= MAX_PHOTOS || parts < 1 || parts > MAX_PARTS || k < 0 || k >= parts || p[3].length() > PART) {
+        return;
+      }
+      String[] got = r.parts[idx];
+      if (got == null || got.length != parts) {
+        got = new String[parts];
+        r.parts[idx] = got;
+      }
+      got[k] = p[3];
+      StringBuilder all = new StringBuilder();
+      for (String piece : got) {
+        if (piece == null) {
+          return;
+        }
+        all.append(piece);
+      }
+      r.parts[idx] = null;
+      this.onPhoto(from, idx + "~" + all);
+    } catch (Throwable t) {
+      de.ulgu.fkreis.core.FkreisAddon.log().warn("Freundeskreis: " + t);
+    }
   }
 
   /** Aus dem Tick: hoechstens alle 0,6 s eine Nachricht verschicken (schont LabyConnect). */
