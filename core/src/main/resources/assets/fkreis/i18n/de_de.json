@@ -284,7 +284,7 @@
       },
       "loot": {
         "name": "Glücksrad",
-        "description": "Einmal am Tag drehst du das Glücksrad und bekommst 1 bis 10 Holy-Coins. Damit schaltest du Hölzer für die Hintergründe frei und kaufst im Sticker-Laden ein. Holy-Coins gibt es nur in diesem Addon, sie kosten nichts und lassen sich nicht kaufen.",
+        "description": "Einmal am Tag drehst du das Glücksrad und bekommst 1 bis 10 Holy-Coins. Damit schaltest du Hölzer für die Hintergründe frei und kaufst im Grotten-Shop ein. Holy-Coins gibt es nur in diesem Addon, sie kosten nichts und lassen sich nicht kaufen.",
         "daily": {
           "name": "Erinnerung",
           "description": "Erinnert dich einmal am Tag mit einer Benachrichtigung, kurz nachdem du einen Server betreten hast."
@@ -301,7 +301,7 @@
         }
       },
       "shop": {
-        "name": "Sticker-Grotte",
+        "name": "Grotten-Shop",
         "description": "Jeden Tag stehen vier zufällige Mob-Sticker im Angebot, für alle Spieler dieselben. Bezahlt wird mit Holy-Coins vom täglichen Glücksrad, gekaufte Sticker landen in deinem Sammelbuch.",
         "open": {
           "name": "Laden öffnen",
@@ -310,7 +310,7 @@
         },
         "inHub": {
           "name": "Im /fk-Menü anzeigen",
-          "description": "Zeigt die Sticker-Grotte als Eintrag im /fk-Menü."
+          "description": "Zeigt den Grotten-Shop als Eintrag im /fk-Menü."
         }
       }
     },
@@ -499,7 +499,7 @@
         "mixtape": "Mixtapes",
         "match": "Blockmatch",
         "loot": "Glücksrad",
-        "shop": "Sticker-Grotte"
+        "shop": "Grotten-Shop"
       },
       "vanish": {
         "wheel": {
@@ -841,7 +841,7 @@
         "title": "Glücksrad",
         "name": "Holy-Coins",
         "tomorrow": "Morgen darfst du wieder drehen.",
-        "shop": "Sticker-Grotte",
+        "shop": "Grotten-Shop",
         "tier0": "Mob-Sticker · einfach",
         "tier1": "Mob-Sticker · besser",
         "tier2": "Mob-Sticker · extrem gut",
@@ -852,7 +852,8 @@
         "ready": "Dein Glücksrad ist bereit! Öffne es mit /fk.",
         "bought": "Gekauft",
         "buy": "Kaufen · %s",
-        "poor": "Zu wenig Coins"
+        "poor": "Zu wenig Coins",
+        "woods": "Holz-Grotte"
       }
     },
     "hudWidget": {

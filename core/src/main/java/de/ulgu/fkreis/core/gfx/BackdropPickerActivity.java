@@ -70,11 +70,8 @@ public class BackdropPickerActivity extends FkActivity {
       if (G.in(mx, my, c[0], c[1], c[2], c[3])) {
         String id = "wood:" + Backdrop.IDS[i];
         if (!Loot.get().owns(id)) {
-          if (!Loot.get().buy(id)) { // zu wenig Muenzen
-            G.sound("block.note_block.bass", 0.7F);
-            return true;
-          }
-          G.sound("entity.experience_orb.pickup", 1.2F);
+          de.ulgu.fkreis.core.ui.Screens.now(de.ulgu.fkreis.core.loot.StickerShopActivity.woods()); // gekauft wird in der Holz-Grotte
+          return true;
         }
         if (this.wheel) {
           Loot.get().background = Backdrop.IDS[i];

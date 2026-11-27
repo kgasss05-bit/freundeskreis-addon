@@ -33,6 +33,15 @@ public class WoodPickerActivity extends FkActivity {
     return this.profile ? c.profile().wood() : c.notebook().wood();
   }
 
+  private static String woodId(WoodType wt) {
+    return "wood:" + wt.name().toLowerCase(java.util.Locale.ROOT);
+  }
+
+  /** Gesperrt ist ein Holz, das noch nicht freigeschaltet ist; das gerade gewaehlte bleibt immer nutzbar. */
+  private boolean locked(WoodType wt) {
+    return !de.ulgu.fkreis.core.loot.Loot.get().owns(woodId(wt)) && wt != WoodType.parse(this.target().get());
+  }
+
   private float tileW() { return (this.w - 44 - 3 * 14) / 4F; }
   private float tileH() { return Math.min(this.tileW() * 0.66F, (this.h - 80) / 3F - 26); }
 
@@ -71,6 +80,9 @@ public class WoodPickerActivity extends FkActivity {
       }
       if (this.hover[i] > 0.01F) {
         G.rect(s, tx, ty, tw, th, G.alpha(0x14FFFFFF, this.hover[i]));
+      }
+      if (locked(wt)) {
+        de.ulgu.fkreis.core.loot.Loot.locked(s, tx, ty, tw, th, de.ulgu.fkreis.core.loot.Loot.price(woodId(wt)));
       }
       String label = (sel ? "✔ " : "") + wt.display();
       G.centered(s, label, tx + tw / 2F, ty + th + 6, sel ? 0xFFE8B830 : 0xFFFFFFFF, 1.15F, false);
@@ -120,6 +132,10 @@ public class WoodPickerActivity extends FkActivity {
     WoodType[] all = WoodType.values();
     for (int i = 0; i < all.length; i++) {
       if (G.in(mx, my, this.tileX(i) - 4, this.tileY(i) - 4, this.tileW() + 8, this.tileH() + 26)) {
+        if (locked(all[i])) { // noch nicht freigeschaltet: ab in die Holz-Grotte
+          Screens.now(de.ulgu.fkreis.core.loot.StickerShopActivity.woods());
+          return true;
+        }
         this.target().set(all[i].name());
         this.pop[i] = 1F;
         G.sound("block.wood.place", 1.1F);

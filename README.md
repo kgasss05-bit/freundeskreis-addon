@@ -13,7 +13,7 @@ LabyMod 4 addon by **Priester_Horst** (ULGU Software) for Minecraft 1.21 and new
 - **Diary** – a private leather-bound diary with one entry per day (several pages), optional reminder on server join, selectable cover (three leathers or a white book you dye yourself); can be shared read-only with a code
 - **Mixtapes** – a box of cassette tapes: each tape has your own label and a YouTube or Spotify link; putting it into the recorder opens the link in the browser, an optional small recorder is shown on the HUD; tapes can be offered to friends, who have to accept
 - **Blockmatch** – a questionnaire of 100 questions (values, humour, play style); afterwards the addon shows which players on the server with the addon answered most like you. It is about friendship, only a percentage is shown, and taking part can be switched off
-- **Wheel of fortune** – spin once a day for 1 to 10 Holy Coins (an addon-only currency that cannot be bought); they unlock background woods and pay for the daily sticker shop with four random mob stickers
+- **Wheel of fortune** – spin once a day for 1 to 10 Holy Coins (an addon-only currency that cannot be bought); they unlock background woods and pay for the Grotto Shop with four random mob stickers
 - `/fk` quick menu, keybinds and mouse-wheel entries for everything
 
 ## How data is exchanged

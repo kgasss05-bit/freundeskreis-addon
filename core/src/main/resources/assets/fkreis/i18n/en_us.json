@@ -284,7 +284,7 @@
       },
       "loot": {
         "name": "Wheel of fortune",
-        "description": "Once a day you spin the wheel and get 1 to 10 Holy Coins. Use them to unlock woods for the backgrounds and to buy in the sticker shop. Holy Coins exist only in this addon, they are free and cannot be bought.",
+        "description": "Once a day you spin the wheel and get 1 to 10 Holy Coins. Use them to unlock woods for the backgrounds and to buy in the Grotto Shop. Holy Coins exist only in this addon, they are free and cannot be bought.",
         "daily": {
           "name": "Reminder",
           "description": "Reminds you once a day with a notification, shortly after you joined a server."
@@ -301,7 +301,7 @@
         }
       },
       "shop": {
-        "name": "Sticker cave",
+        "name": "Grotto Shop",
         "description": "Every day four random mob stickers are on offer, the same for all players. You pay with Holy Coins from the daily wheel of fortune, bought stickers go into your sticker book.",
         "open": {
           "name": "Open shop",
@@ -310,7 +310,7 @@
         },
         "inHub": {
           "name": "Show in /fk menu",
-          "description": "Shows the sticker cave as an entry in the /fk menu."
+          "description": "Shows the Grotto Shop as an entry in the /fk menu."
         }
       }
     },
@@ -499,7 +499,7 @@
         "mixtape": "Mixtapes",
         "match": "Blockmatch",
         "loot": "Wheel of fortune",
-        "shop": "Sticker cave"
+        "shop": "Grotto Shop"
       },
       "vanish": {
         "wheel": {
@@ -841,7 +841,7 @@
         "title": "Wheel of fortune",
         "name": "Holy Coins",
         "tomorrow": "You can spin again tomorrow.",
-        "shop": "Sticker cave",
+        "shop": "Grotto Shop",
         "tier0": "Mob sticker · common",
         "tier1": "Mob sticker · better",
         "tier2": "Mob sticker · very good",
@@ -852,7 +852,8 @@
         "ready": "Your wheel of fortune is ready! Open it with /fk.",
         "bought": "Bought",
         "buy": "Buy · %s",
-        "poor": "Not enough coins"
+        "poor": "Not enough coins",
+        "woods": "Wood cave"
       }
     },
     "hudWidget": {

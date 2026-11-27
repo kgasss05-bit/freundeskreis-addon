@@ -15,7 +15,7 @@ public final class Grotto {
   private static final java.util.Map<String, Icon> BLOCKS = new java.util.HashMap<>();
   private static final long ZOOM_MS = 750L, FADE_MS = 450L;
   /** Umriss des Hoehlenlochs, Zeile fuer Zeile von oben: {Einzug, Breite} in Drittel-Bloecken. */
-  private static final int[][] HOLE = {{3, 3}, {2, 5}, {1, 7}, {0, 8}, {0, 9}, {1, 8}, {0, 9}};
+  private static final int[][] HOLE = {{3, 3}, {2, 5}, {1, 7}, {0, 8}, {0, 9}, {0, 9}, {0, 9}};
   private static final String[] FLOWERS = {"poppy", "dandelion", "cornflower", "allium", "azure_bluet", "oxeye_daisy"};
 
   /** Hoehe des Bodens in der Grotte. */
@@ -39,6 +39,28 @@ public final class Grotto {
   private static int hash(int a, int b) {
     int h = a * 73856093 ^ b * 19349663;
     return (h ^ (h >>> 13)) & 0x7FFFFFFF;
+  }
+
+  /** Derselbe Boden wie in der Grotte, aber nur zwischen from und to: so geht er unter dem Gleis nahtlos bis zum Rand weiter. */
+  public static void floorStrip(Stack s, float x, float y, float w, float h, float from, float to) {
+    float[] rh = {14F, 21F, 31F};
+    float yy = y + h - FLOOR;
+    for (int r = 0; r < 3; r++) {
+      float ts = rh[r] * 1.7F, left = x + (w - ((int) (w / ts) + 2) * ts) / 2F;
+      for (int c = 0; c * ts < w + ts; c++) {
+        float tx = left + c * ts;
+        if (tx + ts > from && tx < to) {
+          G.icon(s, block(hash(c, r + 50) % 3 == 0 ? "cobbled_deepslate" : "deepslate"), tx, yy, ts + 0.5F, rh[r] + 0.5F);
+          G.rect(s, tx, yy, ts + 0.5F, rh[r] + 0.5F, G.alpha(0xFF000000, 0.46F - r * 0.12F));
+        }
+      }
+      yy += rh[r];
+    }
+  }
+
+  /** Ohne Aussenansicht direkt in der Grotte stehen. */
+  public void skipOutside() {
+    this.enteredAt = System.currentTimeMillis() - ZOOM_MS;
   }
 
   /** true, sobald man in der Grotte steht (das Hineinzoomen ist vorbei). */
@@ -125,7 +147,6 @@ public final class Grotto {
     }
 
     // Eingang: ein ganz normales Hoehlenloch, unregelmaessig aus dem Fels gebrochen (kein Rahmen, kein Schild, keine Fackeln).
-    float flick = 0.7F + 0.3F * (float) Math.sin(now / 170.0);
     boolean over = this.enteredAt == 0 && G.in(mx, my, e[0] - 6, e[1] - 6, e[2] + 12, e[3] + 6);
     float u = t / 3F;
     for (int pass = 0; pass < 2; pass++) { // erst ein weicher Schatten um das Loch, dann das Loch selbst
@@ -137,11 +158,6 @@ public final class Grotto {
           G.rect(s, hx, hy, hw, u + 0.5F, 0xFF05040A);
         }
       }
-    }
-    float glx = e[0] + 2 * u, gw0 = 6 * u;
-    for (int i = 0; i < 3; i++) { // schwacher warmer Schein aus der Tiefe
-      float gw = gw0 * (0.9F - i * 0.25F), gh = e[3] * (0.55F - i * 0.15F);
-      G.rect(s, glx + (gw0 - gw) / 2F, e[1] + e[3] - gh, gw, gh, G.alpha(i == 1 ? 0xFFB58CFF : 0xFFFFA84A, (over ? 0.20F : 0.09F) * flick));
     }
     if (over) { // das Loch leuchtet auf, wenn die Maus darueber ist
       float pulse = 0.7F + 0.3F * (float) Math.sin(now / 200.0);
